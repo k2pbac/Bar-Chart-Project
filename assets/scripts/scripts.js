@@ -1,12 +1,20 @@
 $(document).ready(function () {
   drawBarChart(
-    [324, 203, 23, 344, 95],
+    [
+      { pepsi: 324 },
+      { coke: 203 },
+      { gingerale: 23 },
+      { dietcoke: 344 },
+      { orange: 95 },
+    ],
     {
       graphOptions: {},
       barOptions: {
-        spacing: "20.5px",
-        radius: "20%",
-        shadow: "medium",
+        spacing: "20.5px", // any form of sizing rem, em, px.
+        radius: "20%", // 0 - 100%
+        shadow: "medium", // small , medium , large
+        position: "flex-start", // Flex-start , flex-end , center
+        barColor: "rgba(23,34,123,0.6)", // Colors - RGBA - Hex
       },
     },
     "div"
@@ -28,11 +36,21 @@ const drawBarChart = function (data, options, element) {
 
 const createBars = function (data, options, barCount) {
   let elements = [];
-  let { spacing, radius, shadow } = options;
+  let { spacing, radius, shadow, position, barColor } = options;
   let newElement;
   let shadowDim;
   let currentBar = 0;
   let width = data.length * 10;
+
+  // Bar value and label
+  let barValue;
+  let barLabel;
+
+  //Bar Styling
+  let barPosition;
+  let barDesign;
+  let barSize;
+
   switch (shadow) {
     case "small":
       shadowDim = "4px 4px 5px grey";
@@ -45,24 +63,23 @@ const createBars = function (data, options, barCount) {
   }
 
   while (barCount > 0) {
-    if (barCount > 1) {
-      newElement = $(
-        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${
-          data[currentBar] + 50
-        }px; width: ${width}px; margin-right: ${spacing}; border: 1px solid black;'></div>`
-      );
-    } else {
-      newElement = $(
-        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${
-          data[currentBar] + 50
-        }px; width: ${width}px; border: 1px solid black;'></div>`
-      );
-    }
+    barValue = Object.values(data[currentBar]);
+    barLabel = Object.keys(data[currentBar]);
+    barPosition = `display: flex; justify-content: center; align-items: ${position}; margin-right: ${spacing};`;
+    barSize = `height: ${barValue}px; width: ${width}px;`;
+    barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; background-color: ${barColor}`;
+    styling = barPosition + " " + barSize + " " + " " + barDesign;
+
+    newElement = $(`<div style='${styling}'></div>`).text(barValue);
+
     elements.push(newElement);
     newElement = "";
     barCount--;
     currentBar++;
-    console.log(barCount);
   }
   return elements;
+};
+
+const createChart = function (data, options) {
+  let graphContainer = $(`<div></div>`);
 };
