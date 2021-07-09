@@ -13,6 +13,7 @@ $(document).ready(function () {
         width: "400px",
         title: "Pop Statistics 2021",
         shadow: "medium", // small , medium , large
+        axisPoint: "average", //broad (10%), precise (), average
       },
       barOptions: {
         spacing: "20.5px", // any form of sizing rem, em, px.
@@ -84,17 +85,35 @@ const createBars = function (data, options, barCount) {
 };
 
 const createChart = function (data, options) {
-  let { height, width, title, shadow } = options;
+  let { height, width, title, shadow, axisPoint } = options;
   let maxValue = 0;
   let axisPoints = [];
+  let axisUnits;
 
   for (let obj of data) {
     if (maxValue < parseInt(Object.values(obj))) {
       maxValue = parseInt(Object.values(obj));
     }
   }
-  for (let i = 0; i < maxValue + 25; i += 25) {
-    axisPoints.push($(`<span></span>`).text(i));
+
+  switch (axisPoint) {
+    case "broad":
+      axisUnits = maxValue * 0.1;
+      break;
+    case "average":
+      axisUnits = (maxValue + data.length) / data.length;
+      break;
+    case "precise":
+      axisUnits = maxValue / data.length;
+      break;
+  }
+
+  for (let i = 0; i < maxValue + axisUnits; i += Math.floor(axisUnits)) {
+    axisPoints.push(
+      $(
+        `<span style='position: absolute; bottom: ${i}px; right: -1%'></span>`
+      ).text(i)
+    );
   }
 
   switch (shadow) {
@@ -110,7 +129,7 @@ const createChart = function (data, options) {
 
   let graphPosition = `display: flex; justify-content: center; margin: auto; align-items: flex-end;`;
   let graphSize = `height: ${height}; width: ${width};`;
-  let graphDesign = `border: 1px solid black; padding: 55px; padding-bottom: 10px; box-shadow: ${shadowDim};`;
+  let graphDesign = `border: 1px solid black; padding: 55px; padding-bottom: 0px; box-shadow: ${shadowDim};`;
 
   let styling = `${graphPosition} ${graphSize} ${graphDesign}`;
   let titleElement = $("<h1 style='position: fixed; top: 1.5rem;'></h1>").text(
@@ -118,9 +137,7 @@ const createChart = function (data, options) {
   );
 
   let leftAxis = $(
-    `<div style='display: flex; flex-direction: column-reverse; justify-content: space-between; height: ${
-      maxValue + 25
-    }px; position:relative; bottom: 0; left: -25%;' ></div>`
+    `<div style='display: flex; flex-direction: column-reverse; height: ${maxValue}px; position:relative; bottom: 0; left: -25%;' ></div>`
   ).add("axis here");
 
   for (let axisPoint of axisPoints) {
