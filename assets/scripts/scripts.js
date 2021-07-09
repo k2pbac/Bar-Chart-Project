@@ -1,8 +1,4 @@
 $(document).ready(function () {
-  let temp = function () {
-    return alert("hello");
-  };
-
   drawBarChart(
     [1, 2, 3, 4, 5],
     { barOptions: { width: "200px", height: "200px" } },
@@ -12,16 +8,29 @@ $(document).ready(function () {
 
 const drawBarChart = function (data, options, element) {
   let chart;
+  let barCount = data.length;
 
   if (options.barOptions) {
-    chart = createBars(options.barOptions);
+    chart = createBars(options.barOptions, barCount);
   }
 
-  $("body").html(chart);
+  for (let item of chart) {
+    $(".here").append(item);
+  }
 };
 
-const createBars = function (options, element) {
-  let newElement = $(`<${element}></${element}>`).text("hello");
+const createBars = function (options, barCount) {
+  let elements = [];
+  let { height, width } = options;
 
-  return newElement;
+  while (barCount > 0) {
+    let newElement = $(
+      `<div style='height: ${height}; width: ${width}; border: 1px solid black;'></div>`
+    );
+    elements.push(newElement);
+    newElement = "";
+    barCount--;
+    console.log(barCount);
+  }
+  return elements;
 };
