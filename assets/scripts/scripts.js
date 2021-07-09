@@ -86,12 +86,17 @@ const createBars = function (data, options, barCount) {
 const createChart = function (data, options) {
   let { height, width, title, shadow } = options;
   let maxValue = 0;
+  let axisPoints = [];
+
   for (let obj of data) {
-    if (maxValue < Object.values(obj)) {
+    if (maxValue < parseInt(Object.values(obj))) {
+      maxValue = parseInt(Object.values(obj));
     }
   }
+  for (let i = 0; i < maxValue + 25; i += 25) {
+    axisPoints.push($(`<span></span>`).text(i));
+  }
 
-  console.log(maxData);
   switch (shadow) {
     case "small":
       shadowDim = "4px 4px 5px grey";
@@ -108,13 +113,19 @@ const createChart = function (data, options) {
   let graphDesign = `border: 1px solid black; padding: 55px; padding-bottom: 10px; box-shadow: ${shadowDim};`;
 
   let styling = `${graphPosition} ${graphSize} ${graphDesign}`;
-  let titleElement = $("<h1 style='position: fixed; top: 2rem;'></h1>").text(
+  let titleElement = $("<h1 style='position: fixed; top: 1.5rem;'></h1>").text(
     title
   );
 
   let leftAxis = $(
-    "<div style='display: flex-column; position:relative; bottom: 0; left: -10%;' ></div>"
-  ).text("axis here");
+    `<div style='display: flex; flex-direction: column-reverse; justify-content: space-between; height: ${
+      maxValue + 25
+    }px; position:relative; bottom: 0; left: -25%;' ></div>`
+  ).add("axis here");
+
+  for (let axisPoint of axisPoints) {
+    $(leftAxis).append(axisPoint);
+  }
   let bottomAxis = $();
 
   let graphContainer = $(`<div style='${styling}'></div>`)
