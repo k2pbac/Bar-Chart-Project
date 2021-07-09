@@ -1,10 +1,9 @@
 $(document).ready(function () {
   drawBarChart(
-    [1, 2, 3, 4, 5],
+    [324, 203, 23, 344, 95],
     {
+      graphOptions: {},
       barOptions: {
-        width: "100px",
-        height: "100px",
         spacing: "20.5px",
         radius: "20%",
         shadow: "medium",
@@ -19,7 +18,7 @@ const drawBarChart = function (data, options, element) {
   let barCount = data.length;
 
   if (options.barOptions) {
-    chart = createBars(options.barOptions, barCount);
+    chart = createBars(data, options.barOptions, barCount);
   }
 
   for (let item of chart) {
@@ -27,12 +26,13 @@ const drawBarChart = function (data, options, element) {
   }
 };
 
-const createBars = function (options, barCount) {
+const createBars = function (data, options, barCount) {
   let elements = [];
-  let { height, width, spacing, radius, shadow } = options;
+  let { spacing, radius, shadow } = options;
   let newElement;
   let shadowDim;
-
+  let currentBar = 0;
+  let width = data.length * 10;
   switch (shadow) {
     case "small":
       shadowDim = "4px 4px 5px grey";
@@ -47,16 +47,21 @@ const createBars = function (options, barCount) {
   while (barCount > 0) {
     if (barCount > 1) {
       newElement = $(
-        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${height}; width: ${width}; margin-right: ${spacing}; border: 1px solid black;'></div>`
+        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${
+          data[currentBar] + 50
+        }px; width: ${width}px; margin-right: ${spacing}; border: 1px solid black;'></div>`
       );
     } else {
       newElement = $(
-        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${height}; width: ${width}; border: 1px solid black;'></div>`
+        `<div style='box-shadow: ${shadowDim}; border-radius: ${radius}; height: ${
+          data[currentBar] + 50
+        }px; width: ${width}px; border: 1px solid black;'></div>`
       );
     }
     elements.push(newElement);
     newElement = "";
     barCount--;
+    currentBar++;
     console.log(barCount);
   }
   return elements;
