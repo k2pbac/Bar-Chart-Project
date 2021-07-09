@@ -1,7 +1,9 @@
 $(document).ready(function () {
   drawBarChart(
     [1, 2, 3, 4, 5],
-    { barOptions: { width: "200px", height: "200px" } },
+    {
+      barOptions: { width: "200px", height: "200px", spacing: "20.5px" },
+    },
     "div"
   );
 });
@@ -21,12 +23,19 @@ const drawBarChart = function (data, options, element) {
 
 const createBars = function (options, barCount) {
   let elements = [];
-  let { height, width } = options;
+  let { height, width, spacing } = options;
+  let newElement;
 
   while (barCount > 0) {
-    let newElement = $(
-      `<div style='height: ${height}; width: ${width}; border: 1px solid black;'></div>`
-    );
+    if (barCount > 1) {
+      newElement = $(
+        `<div style='height: ${height}; width: ${width}; margin-right: ${spacing}; border: 1px solid black;'></div>`
+      );
+    } else {
+      newElement = $(
+        `<div style='height: ${height}; width: ${width}; border: 1px solid black;'></div>`
+      );
+    }
     elements.push(newElement);
     newElement = "";
     barCount--;
