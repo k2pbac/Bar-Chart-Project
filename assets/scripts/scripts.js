@@ -158,12 +158,13 @@ const generateAxis = function (data, options) {
 
   for (let i = 0; i < maxValue + axisUnits; i += Math.floor(axisUnits)) {
     axisPoints.push(
-      $(`<span style='position:absolute; bottom: ${i}px;'></span>`).text(i)
+      $(
+        `<span style='position:relative; height: 0px; max-height: 100%; bottom: ${i}px'></span>`
+      ).text(i)
     );
   }
-
   let leftAxis = $(
-    `<div style='display: flex; flex-direction: column-reverse; margin-top: 10px;' ></div>`
+    `<div style='display: flex; flex-direction: column-reverse; margin-top: 10px; height:400px; max-height: 100%' ></div>`
   );
 
   for (let axisPoint of axisPoints) {
