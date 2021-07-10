@@ -10,13 +10,11 @@ $(document).ready(function () {
     {
       graphOptions: {
         title: "Pop Statistics 2021",
-        shadow: "small", // small , medium , large
         axisPoint: "broad", //broad (10%), precise (), average
       },
       barOptions: {
         spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
-        shadow: "", // none,  small , medium , large, default: none
         position: "bottom", // top, bottom, center , default: center
         barColor: "rgba(23,234,13,0.6)", // Colors - RGBA - Hex
       },
@@ -70,20 +68,13 @@ const drawGraph = function (data, options) {
 
 const drawBars = function (data, options, barCount) {
   let elements = [];
-  let {
-    spacing = spacing || "0px",
-    radius,
-    shadow,
-    position,
-    barColor,
-  } = options;
   let newElement;
-  let shadowDim;
   let currentBar = 0;
   let width = data.length * 10;
   let maxValue = getLargestData(data);
 
   //Bar Styling
+  let { radius, position, barColor } = options;
   let barDesign;
   let barSize;
   let barValue;
@@ -105,21 +96,6 @@ const drawBars = function (data, options, barCount) {
       position = "center";
   }
 
-  switch (shadow) {
-    case "small":
-      shadowDim = "4px 4px 5px grey";
-      break;
-    case "medium":
-      shadowDim = "6px 6px 5px grey";
-      break;
-    case "large":
-      shadowDim = "8px 8px 5px grey";
-      break;
-    default:
-      shadowDim = "none";
-      break;
-  }
-
   while (barCount > 0) {
     barValue = Object.values(data[currentBar]);
 
@@ -134,7 +110,7 @@ const drawBars = function (data, options, barCount) {
     barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
     barSize = `max-height:100%; height: ${barHeight}px; width: ${width}px;`;
-    barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
+    barDesign = `border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue);
@@ -235,4 +211,5 @@ const setBarSpacing = function (options) {
   }
 
   $(".container > .graph").css("justify-content", spacing);
+  $(".container > .x-axis").css("justify-content", spacing);
 };

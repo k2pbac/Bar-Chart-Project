@@ -23,7 +23,6 @@
   background-color: #8ca0ff;
   text-align: center;
   display: flex;
-  justify-content: space-between;
 }
 
 .container > .graph {
@@ -32,7 +31,6 @@
   text-align: center;
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
 }
 
 .container > .y-axis {
