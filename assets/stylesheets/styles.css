@@ -1,29 +1,27 @@
-.y-axis {
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 1;
-  grid-row-end: 4;
-  background-color: antiquewhite;
+.container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-.item {
-  background-color: aquamarine;
-  grid-column-start: 3;
-  grid-column-end: 3;
-}
-.graph {
-  grid-column-start: 2;
-  grid-column-end: 4;
-  grid-row-start: 1;
-  grid-row-end: 4;
-  background-color: antiquewhite;
+  width: 400px;
+  height: 250px;
+  grid-template-areas:
+    "yAxis graph graph graph"
+    "yAxis  graph graph graph"
+    "yAxis  xAxis xAxis xAxis";
+  grid-template-rows: 50px 1fr 30px;
+  grid-template-columns: 30px 3fr;
 }
 
-.x-axis {
-  grid-column-start: 2;
-  grid-column-end: 4;
-  grid-row-start: 4;
-  grid-row-end: 4;
-  background-color: antiquewhite;
+.container > .x-axis {
+  grid-area: xAxis;
+  background-color: #8ca0ff;
+}
+
+.container > .graph {
+  grid-area: graph;
+  background-color: #ffa08c;
+  text-align: center;
+}
+
+.container > .y-axis {
+  grid-area: yAxis;
+  background-color: crimson;
 }
