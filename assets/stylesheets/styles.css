@@ -1,0 +1,29 @@
+.y-axis {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 4;
+  background-color: antiquewhite;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.item {
+  background-color: aquamarine;
+  grid-column-start: 3;
+  grid-column-end: 3;
+}
+.graph {
+  grid-column-start: 2;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 4;
+  background-color: antiquewhite;
+}
+
+.x-axis {
+  grid-column-start: 2;
+  grid-column-end: 4;
+  grid-row-start: 4;
+  grid-row-end: 4;
+  background-color: antiquewhite;
+}
