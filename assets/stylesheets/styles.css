@@ -1,13 +1,15 @@
 .container {
+  margin: auto;
   display: grid;
-  width: 600px;
-  height: 450px;
+  width: 400px;
+  height: 350px;
   grid-template-areas:
-    "yAxis graph graph graph"
+    "top-corner title title title"
+    "yAxis  graph graph graph"
     "yAxis  graph graph graph"
     "yAxis  graph graph graph"
     "corner xAxis xAxis xAxis";
-  grid-template-rows: 50px 1fr 1fr 50px;
+  grid-template-rows: 50px 1fr 1fr 1fr 50px;
   grid-template-columns: 50px 3fr;
 }
 
@@ -34,4 +36,16 @@
   grid-area: yAxis;
   background-color: crimson;
   position: relative;
+}
+
+.container > .title {
+  grid-area: title;
+  background-color: #ffa08c;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.container > .topCorner {
+  grid-area: top-corner;
+  background-color: crimson;
 }
