@@ -22,14 +22,17 @@
   grid-area: xAxis;
   background-color: #8ca0ff;
   text-align: center;
-  position: relative;
+  display: flex;
+  justify-content: space-between;
 }
 
 .container > .graph {
   grid-area: graph;
   background-color: #ffa08c;
   text-align: center;
-  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 }
 
 .container > .y-axis {

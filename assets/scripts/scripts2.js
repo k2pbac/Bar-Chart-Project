@@ -14,11 +14,11 @@ $(document).ready(function () {
         axisPoint: "broad", //broad (10%), precise (), average
       },
       barOptions: {
-        spacing: "20.5px", // any form of sizing rem, em, px.
+        spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
-        shadow: "", // none,  small , medium , large
-        position: "flex-start", // Flex-start , flex-end , center
-        barColor: "rgba(23,34,123,0.6)", // Colors - RGBA - Hex
+        shadow: "", // none,  small , medium , large, default: none
+        position: "bottom", // top, bottom, center , default: center
+        barColor: "rgba(23,234,13,0.6)", // Colors - RGBA - Hex
       },
     },
     $(".element-test")
@@ -41,8 +41,10 @@ const drawBarChart = function (data, options, element) {
     $(".graph").append(bar);
   }
 
+  setBarSpacing(options.barOptions);
+
   let title = $("<h2></h2>").text(options.graphOptions.title);
-  console.log(options.graphOptions.title);
+
   $(".title").append(title);
 };
 
@@ -68,7 +70,13 @@ const drawGraph = function (data, options) {
 
 const drawBars = function (data, options, barCount) {
   let elements = [];
-  let { spacing, radius, shadow, position, barColor } = options;
+  let {
+    spacing = spacing || "0px",
+    radius,
+    shadow,
+    position,
+    barColor,
+  } = options;
   let newElement;
   let shadowDim;
   let currentBar = 0;
@@ -81,6 +89,21 @@ const drawBars = function (data, options, barCount) {
   let barValue;
   let barLabel;
   let barHeight;
+  let barPosition;
+
+  switch (position) {
+    case "top":
+      position = "flex-start";
+      break;
+    case "center":
+      position = "center";
+      break;
+    case "bottom":
+      position = "flex-end";
+      break;
+    default:
+      position = "center";
+  }
 
   switch (shadow) {
     case "small":
@@ -99,29 +122,20 @@ const drawBars = function (data, options, barCount) {
 
   while (barCount > 0) {
     barValue = Object.values(data[currentBar]);
-    if (currentBar % 2 == 0) {
-      barLabel = $(
-        `<div style='font-size: 1.2rem; position: absolute; display: inline-block; left: ${
-          barCount * 50
-        }px;'>${Object.keys(data[currentBar])}</div>`
-      );
-    } else {
-      barLabel = $(
-        `<div style='margin-top: 20px; font-size: 1.2rem; position: absolute; display: inline-block; left: ${
-          barCount * 50
-        }px;'>${Object.keys(data[currentBar])}</div>`
-      );
-    }
+
+    barLabel = $(
+      `<h1 style='font-size: 1.2rem;'>${Object.keys(data[currentBar])}</h1>`
+    );
 
     maxValue < $(".y-axis").height()
       ? (barHeight = barValue)
       : (barHeight = barValue * (1 - (maxValue / $(".y-axis").height() - 1)));
 
-    barSize = `display: inline-block; position: absolute; bottom: 0; left: ${
-      50 * barCount
-    }px; max-height:100%; height: ${barHeight}px; width: ${width}px;`;
-    barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor}`;
-    styling = barSize + " " + " " + barDesign;
+    barPosition = `display: flex; justify-content: center; align-items: ${position};`;
+
+    barSize = `max-height:100%; height: ${barHeight}px; width: ${width}px;`;
+    barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
+    styling = barSize + " " + barDesign + " " + barPosition;
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue);
 
@@ -203,4 +217,22 @@ const getDataValues = function (data) {
     dataValues.push(parseInt(Object.values(data[i])));
   }
   return dataValues;
+};
+
+const setBarSpacing = function (options) {
+  let { spacing } = options || "between";
+
+  switch (spacing) {
+    case "between":
+      spacing = "space-between";
+      break;
+    case "even":
+      spacing = "space-evenly";
+      break;
+    case "around":
+      spacing = "space-around";
+      break;
+  }
+
+  $(".container > .graph").css("justify-content", spacing);
 };
