@@ -89,7 +89,9 @@ const drawBars = function (data, options, barCount) {
     barValue = Object.values(data[currentBar]);
     barLabel = Object.keys(data[currentBar]);
 
-    barSize = `display: inline-block; max-height:100%; height: ${barValue}px; width: ${width}px;`;
+    barSize = `display: inline-block; position: absolute; bottom: 0; left: ${
+      50 * barCount
+    }px; max-height:100%; height: ${barValue}px; width: ${width}px;`;
     barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor}`;
     styling = barSize + " " + " " + barDesign;
 

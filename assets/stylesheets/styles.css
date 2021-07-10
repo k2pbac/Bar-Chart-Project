@@ -1,13 +1,19 @@
 .container {
   display: grid;
-  width: 400px;
-  height: 250px;
+  width: 600px;
+  height: 450px;
   grid-template-areas:
     "yAxis graph graph graph"
     "yAxis  graph graph graph"
-    "yAxis  xAxis xAxis xAxis";
-  grid-template-rows: 50px 1fr 30px;
-  grid-template-columns: 30px 3fr;
+    "yAxis  graph graph graph"
+    "corner xAxis xAxis xAxis";
+  grid-template-rows: 50px 1fr 1fr 50px;
+  grid-template-columns: 50px 3fr;
+}
+
+.container > .corner {
+  grid-area: corner;
+  background-color: darkgray;
 }
 
 .container > .x-axis {
@@ -19,6 +25,7 @@
   grid-area: graph;
   background-color: #ffa08c;
   text-align: center;
+  position: relative;
 }
 
 .container > .y-axis {
