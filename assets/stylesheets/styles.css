@@ -19,6 +19,8 @@
 .container > .x-axis {
   grid-area: xAxis;
   background-color: #8ca0ff;
+  text-align: center;
+  position: relative;
 }
 
 .container > .graph {

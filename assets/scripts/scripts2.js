@@ -93,7 +93,19 @@ const drawBars = function (data, options, barCount) {
 
   while (barCount > 0) {
     barValue = Object.values(data[currentBar]);
-    barLabel = Object.keys(data[currentBar]);
+    if (currentBar % 2 == 0) {
+      barLabel = $(
+        `<div style='font-size: 1.2rem; position: absolute; display: inline-block; left: ${
+          barCount * 50
+        }px;'>${Object.keys(data[currentBar])}</div>`
+      );
+    } else {
+      barLabel = $(
+        `<div style='margin-top: 20px; font-size: 1.2rem; position: absolute; display: inline-block; left: ${
+          barCount * 50
+        }px;'>${Object.keys(data[currentBar])}</div>`
+      );
+    }
 
     barSize = `display: inline-block; position: absolute; bottom: 0; left: ${
       50 * barCount
@@ -103,6 +115,7 @@ const drawBars = function (data, options, barCount) {
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue);
 
+    $(".x-axis").append(barLabel);
     elements.push(newElement);
     newElement = "";
     barCount--;
@@ -147,5 +160,3 @@ const generateAxis = function (data, options) {
 
   return axisPoints;
 };
-
-const generateLabels = function (data, options) {};
