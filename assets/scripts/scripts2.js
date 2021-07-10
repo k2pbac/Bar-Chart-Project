@@ -9,7 +9,9 @@ $(document).ready(function () {
     ],
     {
       graphOptions: {
-        title: "Pop Statistics 2021",
+        title: "Pop Statistics 2021", //any String
+        fontSize: "1.5rem", //any sizing
+        fontColor: "rgb(23,23,12)", // any color
         axisPoint: "broad", //broad (10%), precise (), average
       },
       barOptions: {
@@ -25,6 +27,7 @@ $(document).ready(function () {
 
 const drawBarChart = function (data, options, element) {
   let container = drawGraph(data, options);
+  let { fontColor, fontSize } = options.graphOptions;
 
   $(element).append(container);
   let axisPoints = drawAxis(data, options.graphOptions);
@@ -42,6 +45,8 @@ const drawBarChart = function (data, options, element) {
   setBarSpacing(options.barOptions);
 
   let title = $("<h2></h2>").text(options.graphOptions.title);
+  $(title).css("font-size", fontSize);
+  $(title).css("color", fontColor);
 
   $(".title").append(title);
 };
