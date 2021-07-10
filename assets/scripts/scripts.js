@@ -9,167 +9,222 @@ $(document).ready(function () {
     ],
     {
       graphOptions: {
-        height: "400px",
-        width: "400px",
-        title: "Pop Statistics 2021",
-        shadow: "small", // small , medium , large
-        axisPoint: "average", //broad (10%), precise (), average
+        title: "Pop Statistics 2021", //any String
+        fontSize: "1.5rem", //any sizing
+        fontColor: "rgb(23,23,12)", // any color
+        axisPoint: "broad", //broad (10%), precise (), average
       },
       barOptions: {
-        spacing: "20.5px", // any form of sizing rem, em, px.
+        spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
-        shadow: "", // none,  small , medium , large
-        position: "flex-start", // Flex-start , flex-end , center
-        barColor: "rgba(23,34,123,0.6)", // Colors - RGBA - Hex
+        position: "bottom", // top, bottom, center , default: center
+        barColor: "rgb(23,234,13)", // any type of color
       },
     },
-    "div"
+    $(".element-test")
   );
 });
 
 const drawBarChart = function (data, options, element) {
-  let barCount = data.length;
-  let bars = createBars(data, options.barOptions, barCount);
-  let graph = createChart(data, options.graphOptions);
-  let axis = generateAxis(data, options.graphOptions);
+  let container = drawGraph(data, options);
+  let { fontColor, fontSize } = options.graphOptions;
 
-  for (let item of bars) {
-    $(graph).append(item);
+  $(element).append(container);
+  let axisPoints = drawAxis(data, options.graphOptions);
+
+  for (let axisPoint of axisPoints) {
+    $(".y-axis").append(axisPoint);
   }
 
-  $(".container").append(axis);
-  $(".container").append(graph);
+  let newBars = drawBars(data, options.barOptions, data.length);
+
+  for (let bar of newBars) {
+    $(".graph").append(bar);
+  }
+
+  setBarSpacing(options.barOptions);
+  setGridLines();
+
+  let title = $("<h2></h2>").text(options.graphOptions.title);
+  $(title).css("font-size", fontSize);
+  $(title).css("color", fontColor);
+
+  $(".title").append(title);
 };
 
-const createBars = function (data, options, barCount) {
+const drawGraph = function (data, options) {
+  let container = $("<div class='container'></div>");
+  let yAxis = $("<div class='y-axis'></div>");
+  let xAxis = $("<div class='x-axis'></div>");
+  let graph = $("<div class='graph pattern-grid-lg bg-white'></div>");
+  let bottomCorner = $("<div class='bottom-corner'></div>");
+  let topCorner = $("<div class='top-corner'></div>");
+  let title = $("<div class='title'></div>");
+
+  container
+    .append(yAxis)
+    .append(xAxis)
+    .append(graph)
+    .append(bottomCorner)
+    .append(topCorner)
+    .append(title);
+
+  return container;
+};
+
+const drawBars = function (data, options, barCount) {
   let elements = [];
-  let { spacing, radius, shadow, position, barColor } = options;
   let newElement;
-  let shadowDim;
   let currentBar = 0;
   let width = data.length * 10;
-  let flexContainer = $(
-    "<div style='display: flex; flex-direction: column; max-height: 100%;'></div>"
-  );
+  let maxValue = getLargestData(data);
+
   //Bar Styling
-  let barPosition;
+  let { radius, position, barColor } = options;
   let barDesign;
   let barSize;
   let barValue;
   let barLabel;
+  let barHeight;
+  let barPosition;
 
-  switch (shadow) {
-    case "small":
-      shadowDim = "4px 4px 5px grey";
+  switch (position) {
+    case "top":
+      position = "flex-start";
       break;
-    case "medium":
-      shadowDim = "6px 6px 5px grey";
+    case "center":
+      position = "center";
       break;
-    case "large":
-      shadowDim = "8px 8px 5px grey";
+    case "bottom":
+      position = "flex-end";
       break;
     default:
-      shadowDim = "none";
-      break;
+      position = "center";
   }
 
   while (barCount > 0) {
     barValue = Object.values(data[currentBar]);
-    barLabel = Object.keys(data[currentBar]);
-    barPosition = `display: flex; justify-content: center; align-items: ${position}; margin-right: ${spacing};`;
-    barSize = `height: ${barValue}px; width: ${width}px;`;
-    barDesign = `box-shadow: ${shadowDim}; border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor}`;
-    styling = barPosition + " " + barSize + " " + " " + barDesign;
+
+    barLabel = $(
+      `<h1 style='font-size: 1.2rem;'>${Object.keys(data[currentBar])}</h1>`
+    );
+
+    maxValue < $(".y-axis").height()
+      ? (barHeight = barValue)
+      : (barHeight = barValue * (1 - (maxValue / $(".y-axis").height() - 1)));
+
+    barPosition = `display: flex; justify-content: center; align-items: ${position};`;
+
+    barSize = `max-height:100%; height: ${Math.ceil(
+      barHeight
+    )}px; width: ${width}px;`;
+    barDesign = `border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
+    styling = barSize + " " + barDesign + " " + barPosition;
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue);
-    $(flexContainer).append(newElement);
-    // .append(`<span>${barLabel}</span>`);
 
-    elements.push(flexContainer);
+    $(".x-axis").append(barLabel);
+    elements.push(newElement);
     newElement = "";
-    flexContainer = $(
-      "<div style='display: flex; flex-direction: column; max-height: 100%;'></div>"
-    );
     barCount--;
     currentBar++;
   }
   return elements;
 };
 
-const createChart = function (data, options) {
-  let { height, width, title, shadow } = options;
+//Helper function to generate the x and y axis
 
-  switch (shadow) {
-    case "small":
-      shadowDim = "4px 4px 5px grey";
+const drawAxis = function (data, options) {
+  let { axisPoint } = options;
+  let maxValue = getLargestData(data);
+  let axisPoints = [];
+  let axisUnits;
+  let axisHeight;
+  let dataValues = getDataValues(data);
+
+  switch (axisPoint) {
+    case "precise":
+      $(".y-axis").height() < maxValue
+        ? (axisUnits = Math.ceil(
+            maxValue * 0.15 + (maxValue - $(".y-axis").height()) / data.length
+          ))
+        : (axisUnits = Math.ceil(maxValue * 0.15));
       break;
-    case "medium":
-      shadowDim = "6px 6px 5px grey";
+    case "average":
+      const sum = dataValues.reduce((a, b) => a + b, 0);
+      const avg = sum / data.length || 0;
+      $(".y-axis").height() < maxValue
+        ? (axisUnits = Math.ceil(
+            avg / data.length +
+              Math.ceil(avg - $(".y-axis").height()) / data.length
+          ))
+        : (axisUnits = avg / data.length);
       break;
-    case "large":
-      shadowDim = "8px 8px 5px grey";
-      break;
-    default:
-      shadowDim = "none";
+    case "broad":
+      $(".y-axis").height() < maxValue
+        ? (axisUnits =
+            Math.ceil(maxValue / data.length) +
+            Math.ceil(maxValue - $(".y-axis").height()) / data.length)
+        : (axisUnits = maxValue / data.length);
       break;
   }
 
-  let graphPosition = `display: flex; justify-content: center; align-items: flex-end;`;
-  let graphSize = `max-height: ${height}; max-width: ${width};`;
-  let graphDesign = `border: 1px solid black; padding: 100px; padding-bottom: 0px; box-shadow: ${shadowDim};`;
-
-  let styling = `${graphPosition} ${graphSize} ${graphDesign}`;
-  let titleElement = $(
-    "<h1 style='position: fixed; top: 1.5rem; margin-bottom: 20px;'></h1>"
-  ).text(title);
-
-  let graphContainer = $(`<div style='${styling}'></div>`).prepend(
-    titleElement
-  );
-
-  return graphContainer;
+  for (let i = 0; i <= maxValue + axisUnits; i += axisUnits) {
+    maxValue > $(".y-axis").height()
+      ? (axisHeight = i * (1 - (maxValue / $(".y-axis").height() - 1)))
+      : (axisHeight = i);
+    axisPoints.push(
+      $(
+        `<div style='max-height:100%; height: ${
+          i !== 0 ? Math.ceil(axisHeight) : ""
+        }px;'></div>`
+      ).text(i)
+    );
+  }
+  return axisPoints;
 };
 
-//Helper function to generate the x and y axis
-
-const generateAxis = function (data, options) {
-  let { axisPoint } = options;
+const getLargestData = function (data) {
   let maxValue = 0;
-  let axisPoints = [];
-  let axisUnits;
-
   for (let obj of data) {
     if (maxValue < parseInt(Object.values(obj))) {
       maxValue = parseInt(Object.values(obj));
     }
   }
 
-  switch (axisPoint) {
-    case "broad":
-      axisUnits = maxValue * 0.1;
+  return maxValue;
+};
+
+const getDataValues = function (data) {
+  let dataValues = [];
+
+  for (let i = 0; i < data.length; i++) {
+    dataValues.push(parseInt(Object.values(data[i])));
+  }
+  return dataValues;
+};
+
+const setBarSpacing = function (options) {
+  let { spacing } = options || "between";
+
+  switch (spacing) {
+    case "between":
+      spacing = "space-between";
       break;
-    case "average":
-      axisUnits = (maxValue + data.length) / data.length;
+    case "even":
+      spacing = "space-evenly";
       break;
-    case "precise":
-      axisUnits = maxValue / data.length;
+    case "around":
+      spacing = "space-around";
       break;
   }
 
-  for (let i = 0; i < maxValue + axisUnits; i += Math.floor(axisUnits)) {
-    axisPoints.push(
-      $(
-        `<span style='position:relative; height: 0px; max-height: 100%; bottom: ${i}px'></span>`
-      ).text(i)
-    );
-  }
-  let leftAxis = $(
-    `<div style='display: flex; flex-direction: column-reverse; margin-top: 10px; height:400px; max-height: 100%' ></div>`
-  );
+  $(".container > .graph").css("justify-content", spacing);
+  $(".container > .x-axis").css("justify-content", spacing);
+};
 
-  for (let axisPoint of axisPoints) {
-    $(leftAxis).append(axisPoint);
-  }
+const setGridLines = function () {
+  let gridLine = $("<hr>");
 
-  return leftAxis;
+  // $(".graph").append(gridLine);
 };
