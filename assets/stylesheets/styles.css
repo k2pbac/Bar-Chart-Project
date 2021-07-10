@@ -13,7 +13,7 @@
   grid-template-columns: 50px 3fr;
 }
 
-.container > .corner {
+.container > .bottom-corner {
   grid-area: corner;
   background-color: darkgray;
 }
@@ -42,10 +42,9 @@
   grid-area: title;
   background-color: #ffa08c;
   text-align: center;
-  padding-top: 10px;
 }
 
-.container > .topCorner {
+.container > .top-corner {
   grid-area: top-corner;
   background-color: crimson;
 }

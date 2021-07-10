@@ -26,38 +26,44 @@ $(document).ready(function () {
 });
 
 const drawBarChart = function (data, options, element) {
+  let container = drawGraph(data, options);
+
+  $("body").append(container);
+  let axisPoints = drawAxis(data, options.graphOptions);
+
+  for (let axisPoint of axisPoints) {
+    $(".y-axis").append(axisPoint);
+  }
+
   let newBars = drawBars(data, options.barOptions, data.length);
-  let axisPoints = generateAxis(data, options.graphOptions);
 
   for (let bar of newBars) {
     $(".graph").append(bar);
   }
 
-  for (let axisPoint of axisPoints) {
-    $(".y-axis").append(axisPoint);
-  }
+  let title = $("<h2></h2>").text(options.graphOptions.title);
+  console.log(options.graphOptions.title);
+  $(".title").append(title);
 };
 
 const drawGraph = function (data, options) {
-  let { shadow, axisPoint, title } = options;
-  let shadowDim;
+  let container = $("<div class='container'></div>");
+  let yAxis = $("<div class='y-axis'></div>");
+  let xAxis = $("<div class='x-axis'></div>");
+  let graph = $("<div class='graph'></div>");
+  let bottomCorner = $("<div class='bottom-corner'></div>");
+  let topCorner = $("<div class='top-corner'></div>");
+  let title = $("<div class='title'></div>");
 
-  switch (shadow) {
-    case "small":
-      shadowDim = "4px 4px 5px grey";
-      break;
-    case "medium":
-      shadowDim = "6px 6px 5px grey";
-      break;
-    case "large":
-      shadowDim = "8px 8px 5px grey";
-      break;
-    default:
-      shadowDim = "none";
-      break;
-  }
+  container
+    .append(yAxis)
+    .append(xAxis)
+    .append(graph)
+    .append(bottomCorner)
+    .append(topCorner)
+    .append(title);
 
-  let graphStyles = `${shadowDim};`;
+  return container;
 };
 
 const drawBars = function (data, options, barCount) {
@@ -70,7 +76,6 @@ const drawBars = function (data, options, barCount) {
   let maxValue = getLargestData(data);
 
   //Bar Styling
-  let barPosition;
   let barDesign;
   let barSize;
   let barValue;
@@ -131,23 +136,31 @@ const drawBars = function (data, options, barCount) {
 
 //Helper function to generate the x and y axis
 
-const generateAxis = function (data, options) {
+const drawAxis = function (data, options) {
   let { axisPoint } = options;
   let maxValue = getLargestData(data);
   let axisPoints = [];
   let axisUnits;
   let axisHeight;
+  let dataValues = getDataValues(data);
 
   switch (axisPoint) {
     case "precise":
-      if (maxValue > maxValue * 0.1 * data.length) {
-        axisUnits = maxValue * 0.1 + (maxValue - maxValue * 0.1 * data.length);
-      } else {
-        axisUnits = maxValue * 0.1;
-      }
+      $(".y-axis").height() < maxValue
+        ? (axisUnits = Math.ceil(
+            maxValue * 0.15 + (maxValue - $(".y-axis").height()) / data.length
+          ))
+        : (axisUnits = Math.ceil(maxValue * 0.15));
       break;
     case "average":
-      axisUnits = (maxValue + data.length) / data.length;
+      const sum = dataValues.reduce((a, b) => a + b, 0);
+      const avg = sum / data.length || 0;
+      $(".y-axis").height() < maxValue
+        ? (axisUnits = Math.ceil(
+            avg / data.length +
+              Math.ceil(avg - $(".y-axis").height()) / data.length
+          ))
+        : (axisUnits = avg / data.length);
       break;
     case "broad":
       $(".y-axis").height() < maxValue
@@ -158,7 +171,7 @@ const generateAxis = function (data, options) {
       break;
   }
 
-  for (let i = 0; i <= maxValue; i += Math.floor(maxValue / data.length)) {
+  for (let i = 0; i <= maxValue + axisUnits; i += axisUnits) {
     maxValue > $(".y-axis").height()
       ? (axisHeight = i * (1 - (maxValue / $(".y-axis").height() - 1)))
       : (axisHeight = i);
@@ -181,4 +194,13 @@ const getLargestData = function (data) {
   }
 
   return maxValue;
+};
+
+const getDataValues = function (data) {
+  let dataValues = [];
+
+  for (let i = 0; i < data.length; i++) {
+    dataValues.push(parseInt(Object.values(data[i])));
+  }
+  return dataValues;
 };
