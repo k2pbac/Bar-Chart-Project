@@ -67,6 +67,7 @@ const drawBars = function (data, options, barCount) {
   let shadowDim;
   let currentBar = 0;
   let width = data.length * 10;
+  let maxValue = getLargestData(data);
 
   //Bar Styling
   let barPosition;
@@ -107,9 +108,9 @@ const drawBars = function (data, options, barCount) {
       );
     }
 
-    barValue < $(".y-axis").height()
+    maxValue < $(".y-axis").height()
       ? (barHeight = barValue)
-      : (barHeight = barValue - (344 - $(".y-axis").height()));
+      : (barHeight = barValue * (1 - (maxValue / $(".y-axis").height() - 1)));
 
     barSize = `display: inline-block; position: absolute; bottom: 0; left: ${
       50 * barCount
@@ -132,15 +133,10 @@ const drawBars = function (data, options, barCount) {
 
 const generateAxis = function (data, options) {
   let { axisPoint } = options;
-  let maxValue = 0;
+  let maxValue = getLargestData(data);
   let axisPoints = [];
   let axisUnits;
-
-  for (let obj of data) {
-    if (maxValue < parseInt(Object.values(obj))) {
-      maxValue = parseInt(Object.values(obj));
-    }
-  }
+  let axisHeight;
 
   switch (axisPoint) {
     case "precise":
@@ -162,15 +158,27 @@ const generateAxis = function (data, options) {
       break;
   }
 
-  for (let i = 0; i <= maxValue; i += axisUnits) {
-    console.log(maxValue - $(".y-axis").height(), axisUnits);
+  for (let i = 0; i <= maxValue; i += Math.floor(maxValue / data.length)) {
+    maxValue > $(".y-axis").height()
+      ? (axisHeight = i * (1 - (maxValue / $(".y-axis").height() - 1)))
+      : (axisHeight = i);
     axisPoints.push(
       $(
-        `<div style='position: absolute; max-height:100%; height: ${i}px; bottom:0; right: 0;'></div>`
-      ).text(i + axisUnits)
-      // i !== 0 ? i + (maxValue - $(".y-axis").height()) :
+        `<div style='position: absolute; max-height:100%; height: ${axisHeight}px; bottom:0; right: 0;'></div>`
+      ).text(i)
     );
   }
 
   return axisPoints;
+};
+
+const getLargestData = function (data) {
+  let maxValue = 0;
+  for (let obj of data) {
+    if (maxValue < parseInt(Object.values(obj))) {
+      maxValue = parseInt(Object.values(obj));
+    }
+  }
+
+  return maxValue;
 };
