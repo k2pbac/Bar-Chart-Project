@@ -21,14 +21,14 @@ $(document).ready(function () {
         barColor: "rgba(23,34,123,0.6)", // Colors - RGBA - Hex
       },
     },
-    "div"
+    $(".element-test")
   );
 });
 
 const drawBarChart = function (data, options, element) {
   let container = drawGraph(data, options);
 
-  $("body").append(container);
+  $(element).append(container);
   let axisPoints = drawAxis(data, options.graphOptions);
 
   for (let axisPoint of axisPoints) {
