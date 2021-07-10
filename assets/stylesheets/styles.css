@@ -31,4 +31,5 @@
 .container > .y-axis {
   grid-area: yAxis;
   background-color: crimson;
+  position: relative;
 }

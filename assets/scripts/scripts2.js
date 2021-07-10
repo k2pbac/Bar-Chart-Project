@@ -27,9 +27,15 @@ $(document).ready(function () {
 
 const drawBarChart = function (data, options, element) {
   let newBars = drawBars(data, options.barOptions, data.length);
+  let axisPoints = generateAxis(data, options.graphOptions);
 
   for (let bar of newBars) {
     $(".graph").append(bar);
+  }
+
+  for (let axisPoint of axisPoints) {
+    console.log(axisPoint);
+    $(".y-axis").append(axisPoint);
   }
 };
 
@@ -104,3 +110,42 @@ const drawBars = function (data, options, barCount) {
   }
   return elements;
 };
+
+//Helper function to generate the x and y axis
+
+const generateAxis = function (data, options) {
+  let { axisPoint } = options;
+  let maxValue = 0;
+  let axisPoints = [];
+  let axisUnits;
+
+  for (let obj of data) {
+    if (maxValue < parseInt(Object.values(obj))) {
+      maxValue = parseInt(Object.values(obj));
+    }
+  }
+
+  switch (axisPoint) {
+    case "broad":
+      axisUnits = maxValue * 0.1;
+      break;
+    case "average":
+      axisUnits = (maxValue + data.length) / data.length;
+      break;
+    case "precise":
+      axisUnits = maxValue / data.length;
+      break;
+  }
+
+  for (let i = 0; i < maxValue + axisUnits; i += Math.floor(axisUnits)) {
+    axisPoints.push(
+      $(
+        `<div style='position: absolute; bottom: ${i}px; right: 0;'></div>`
+      ).text(i)
+    );
+  }
+
+  return axisPoints;
+};
+
+const generateLabels = function (data, options) {};
