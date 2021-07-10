@@ -18,7 +18,7 @@ $(document).ready(function () {
         spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center
-        barColor: "rgba(23,234,13,0.6)", // Colors - RGBA - Hex
+        barColor: "rgb(23,234,13)", // any type of color
       },
     },
     $(".element-test")
@@ -43,6 +43,7 @@ const drawBarChart = function (data, options, element) {
   }
 
   setBarSpacing(options.barOptions);
+  setGridLines();
 
   let title = $("<h2></h2>").text(options.graphOptions.title);
   $(title).css("font-size", fontSize);
@@ -55,7 +56,7 @@ const drawGraph = function (data, options) {
   let container = $("<div class='container'></div>");
   let yAxis = $("<div class='y-axis'></div>");
   let xAxis = $("<div class='x-axis'></div>");
-  let graph = $("<div class='graph'></div>");
+  let graph = $("<div class='graph pattern-grid-lg bg-white'></div>");
   let bottomCorner = $("<div class='bottom-corner'></div>");
   let topCorner = $("<div class='top-corner'></div>");
   let title = $("<div class='title'></div>");
@@ -114,7 +115,9 @@ const drawBars = function (data, options, barCount) {
 
     barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
-    barSize = `max-height:100%; height: ${barHeight}px; width: ${width}px;`;
+    barSize = `max-height:100%; height: ${Math.ceil(
+      barHeight
+    )}px; width: ${width}px;`;
     barDesign = `border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
@@ -172,11 +175,12 @@ const drawAxis = function (data, options) {
       : (axisHeight = i);
     axisPoints.push(
       $(
-        `<div style='position: absolute; max-height:100%; height: ${axisHeight}px; bottom:0; right: 0;'></div>`
+        `<div style='max-height:100%; height: ${
+          i !== 0 ? Math.ceil(axisHeight) : ""
+        }px;'></div>`
       ).text(i)
     );
   }
-
   return axisPoints;
 };
 
@@ -217,4 +221,10 @@ const setBarSpacing = function (options) {
 
   $(".container > .graph").css("justify-content", spacing);
   $(".container > .x-axis").css("justify-content", spacing);
+};
+
+const setGridLines = function () {
+  let gridLine = $("<hr>");
+
+  // $(".graph").append(gridLine);
 };

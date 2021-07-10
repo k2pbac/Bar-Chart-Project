@@ -15,37 +15,36 @@
 
 .container > .bottom-corner {
   grid-area: corner;
-  background-color: darkgray;
 }
 
 .container > .x-axis {
   grid-area: xAxis;
-  background-color: #8ca0ff;
   text-align: center;
   display: flex;
 }
 
 .container > .graph {
   grid-area: graph;
-  background-color: #ffa08c;
   text-align: center;
   display: flex;
   align-items: flex-end;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .container > .y-axis {
   grid-area: yAxis;
-  background-color: crimson;
-  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  padding-right: 5px;
 }
 
 .container > .title {
   grid-area: title;
-  background-color: #ffa08c;
   text-align: center;
 }
 
 .container > .top-corner {
   grid-area: top-corner;
-  background-color: crimson;
 }
