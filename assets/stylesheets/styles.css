@@ -7,7 +7,7 @@
     "top-corner title title title legend-title legend-title"
     "yAxis  graph graph graph square label"
     "corner xAxis xAxis xAxis bottom-right bottom-right";
-  grid-template-rows: 50px 150px 50px;
+  grid-template-rows: 50px 350px 50px;
   grid-template-columns: 50px 5fr;
 }
 
@@ -45,6 +45,7 @@
   grid-area: xAxis;
   text-align: center;
   display: flex;
+  padding-left: 10px;
 }
 
 .container > .graph {
@@ -52,9 +53,11 @@
   text-align: center;
   display: flex;
   align-items: flex-end;
+  border-right: 1px solid black;
   border-bottom: 1px solid black;
   max-height: 100%;
   min-height: 100%;
+  margin-right: 10px;
 }
 
 .container > .y-axis {

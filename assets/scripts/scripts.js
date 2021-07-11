@@ -17,10 +17,10 @@ $(document).ready(function () {
       barOptions: {
         fontSize: "",
         fontColor: "",
-        spacing: "even", // around, between, even
+        spacing: "between", // around, between, even
         radius: "20%", // 0 - 100%
-        position: "bottom", // top, bottom, center , default: center
-        barColor: "rgb(23,234,13)", // any type of color
+        position: "bottom", // top, bottom, center , default: center,
+        barColor: "rgba(189, 195, 199, 1);", // any type of color
       },
     },
     $(".element-test")
@@ -130,7 +130,7 @@ const drawBars = function (data, options, barCount) {
     barSize = `max-height:100%; height: ${Math.floor(
       barHeight - 3
     )}px; width: ${width}px;`;
-    barDesign = `border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
+    barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${barColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue[currentBar]);
@@ -181,7 +181,7 @@ const drawAxis = function (data, options) {
       break;
   }
 
-  for (let i = 0; i <= maxValue + axisUnits; i += axisUnits) {
+  for (let i = 0; i <= maxValue; i += axisUnits) {
     maxValue > $(".y-axis").height()
       ? (axisHeight = i - (i * (maxValue - $(".graph").height())) / maxValue)
       : (axisHeight = i);
