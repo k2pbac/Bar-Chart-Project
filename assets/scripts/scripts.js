@@ -9,6 +9,7 @@ $(document).ready(function () {
     ],
     {
       graphOptions: {
+        size: "medium", // small, medium, large, custom (any sizing), default: medium
         title: "Pop Statistics 2021", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
@@ -17,10 +18,16 @@ $(document).ready(function () {
       barOptions: {
         fontSize: "",
         fontColor: "",
-        spacing: "between", // around, between, even
+        spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center,
-        barColor: "rgba(189, 195, 199, 1);", // any type of color
+        barColor: [
+          "rgba(189, 195, 199, 1)",
+          "rgba(1, 195, 199, 1)",
+          "rgba(189, 2, 199, 1)",
+          "rgba(189, 195, 123, 1)",
+          "rgba(123, 13, 199, 1)",
+        ], // any type of color
       },
     },
     $(".element-test")
@@ -28,10 +35,6 @@ $(document).ready(function () {
 });
 
 const drawBarChart = function (data, options, element) {
-  let gridArea = `"top-corner title title title"
-  "yAxis graph graph graph"
-  "yAxis graph graph graph"
-  "yAxis graph graph graph"`;
   let container = drawGraph(data, options);
   let { fontColor, fontSize } = options.graphOptions;
 
@@ -51,6 +54,7 @@ const drawBarChart = function (data, options, element) {
   setBarSpacing(options.barOptions);
   setGridLines();
   showLegend(data, options.barOptions);
+  setDimensions(options.graphOptions);
 
   let title = $(
     `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
@@ -99,6 +103,7 @@ const drawBars = function (data, options, barCount) {
   let barLabel;
   let barHeight;
   let barPosition;
+  let tempColor;
 
   switch (position) {
     case "top":
@@ -115,6 +120,16 @@ const drawBars = function (data, options, barCount) {
   }
 
   while (barCount > 0) {
+    if (Array.isArray(barColor)) {
+      if (typeof barColor[currentBar] !== "undefined") {
+        tempColor = barColor[currentBar];
+      } else {
+        tempColor = barColor[0];
+      }
+    } else {
+      tempColor = barColor;
+    }
+
     barLabel = $(
       `<h1 style='font-size: 1.2rem;'>${Object.keys(data[currentBar])}</h1>`
     );
@@ -130,7 +145,7 @@ const drawBars = function (data, options, barCount) {
     barSize = `max-height:100%; height: ${Math.floor(
       barHeight - 3
     )}px; width: ${width}px;`;
-    barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${barColor};`;
+    barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue[currentBar]);
@@ -241,22 +256,64 @@ const setGridLines = function () {
   // $(".graph").append(gridLine);
 };
 
+const setDimensions = function (options) {
+  let { size } = options;
+  let height;
+  let width;
+  if (typeof size !== "object") {
+    switch (size) {
+      case "small":
+        height = "400px";
+        width = "500px";
+        break;
+      case "medium":
+        height = "500px";
+        width = "550px";
+        break;
+      case "large":
+        height = "550px";
+        width = "600px";
+        break;
+      default:
+        height = "500px";
+        width = "550px";
+        break;
+    }
+  } else {
+    height = size.height;
+    width = size.width;
+  }
+
+  $(".container").css("width", width);
+  $(".container").css("height", height);
+};
+
 const showLegend = function (data, options) {
   let { barColor } = options;
   let title = $("<h2>Legend</h2>");
   let barLabel;
   let barSquare;
+  let tempColor;
 
   $(".legend-title").append(title);
 
   for (let i = 0; i < data.length; i++) {
+    if (Array.isArray(barColor)) {
+      if (typeof barColor[i] !== "undefined") {
+        tempColor = barColor[i];
+      } else {
+        tempColor = barColor[0];
+      }
+    } else {
+      tempColor = barColor;
+    }
     barLabel = $(
       `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
         data[i]
       )}</div>`
     );
     barSquare = $(
-      `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${barColor}'></div>`
+      `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
     );
     $(".square").append(barSquare);
     $(".label").append(barLabel);
