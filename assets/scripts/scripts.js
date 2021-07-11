@@ -12,7 +12,7 @@ $(document).ready(function () {
         title: "Pop Statistics 2021", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
-        axisPoint: "broad", //broad (10%), precise (), average
+        axisPoint: "broad", //broad , precise , average , default: broad
       },
       barOptions: {
         fontSize: "",
@@ -36,6 +36,7 @@ const drawBarChart = function (data, options, element) {
   let { fontColor, fontSize } = options.graphOptions;
 
   $(element).append(container);
+
   let axisPoints = drawAxis(data, options.graphOptions);
 
   for (let axisPoint of axisPoints) {
@@ -49,6 +50,7 @@ const drawBarChart = function (data, options, element) {
 
   setBarSpacing(options.barOptions);
   setGridLines();
+  showLegend(data, options.barOptions);
 
   let title = $(
     `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
@@ -56,9 +58,6 @@ const drawBarChart = function (data, options, element) {
   $(title).css("font-size", fontSize);
   $(title).css("color", fontColor);
   $(".title").append(title);
-
-  showLegend(data, options.barOptions);
-  // $(".container").css("grid-template-areas", gridArea);
 };
 
 const drawGraph = function (data, options) {
@@ -96,7 +95,7 @@ const drawBars = function (data, options, barCount) {
   let { radius, position, barColor } = options;
   let barDesign;
   let barSize;
-  let barValue;
+  let barValue = getDataValues(data);
   let barLabel;
   let barHeight;
   let barPosition;
@@ -116,25 +115,25 @@ const drawBars = function (data, options, barCount) {
   }
 
   while (barCount > 0) {
-    barValue = Object.values(data[currentBar]);
-
     barLabel = $(
       `<h1 style='font-size: 1.2rem;'>${Object.keys(data[currentBar])}</h1>`
     );
-
-    maxValue < $(".y-axis").height()
-      ? (barHeight = barValue)
-      : (barHeight = barValue * (1 - (maxValue / $(".y-axis").height() - 1)));
+    maxValue < $(".graph").height()
+      ? (barHeight = parseInt(barValue[currentBar]))
+      : (barHeight =
+          barValue[currentBar] -
+          (barValue[currentBar] * (maxValue - $(".graph").height())) /
+            maxValue);
 
     barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
-    barSize = `max-height:100%; height: ${Math.ceil(
-      barHeight
+    barSize = `max-height:100%; height: ${Math.floor(
+      barHeight - 3
     )}px; width: ${width}px;`;
     barDesign = `border-radius: ${radius}; border: 1px solid black; border-bottom: none; background-color: ${barColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
-    newElement = $(`<div style='${styling}'></div>`).text(barValue);
+    newElement = $(`<div style='${styling}'></div>`).text(barValue[currentBar]);
 
     $(".x-axis").append(barLabel);
     elements.push(newElement);
@@ -158,41 +157,40 @@ const drawAxis = function (data, options) {
   switch (axisPoint) {
     case "precise":
       $(".y-axis").height() < maxValue
-        ? (axisUnits = Math.ceil(
+        ? (axisUnits = Math.floor(
             maxValue * 0.15 + (maxValue - $(".y-axis").height()) / data.length
           ))
-        : (axisUnits = Math.ceil(maxValue * 0.15));
+        : (axisUnits = Math.floor(maxValue * 0.15));
       break;
     case "average":
       const sum = dataValues.reduce((a, b) => a + b, 0);
       const avg = sum / data.length || 0;
       $(".y-axis").height() < maxValue
-        ? (axisUnits = Math.ceil(
+        ? (axisUnits = Math.floor(
             avg / data.length +
-              Math.ceil(avg - $(".y-axis").height()) / data.length
+              Math.floor(avg - $(".y-axis").height()) / data.length
           ))
         : (axisUnits = avg / data.length);
       break;
     case "broad":
       $(".y-axis").height() < maxValue
         ? (axisUnits =
-            Math.ceil(maxValue / data.length) +
-            Math.ceil(maxValue - $(".y-axis").height()) / data.length)
+            Math.floor(maxValue / data.length) +
+            Math.floor(maxValue - $(".y-axis").height()) / data.length)
         : (axisUnits = maxValue / data.length);
       break;
   }
 
   for (let i = 0; i <= maxValue + axisUnits; i += axisUnits) {
     maxValue > $(".y-axis").height()
-      ? (axisHeight = i * (1 - (maxValue / $(".y-axis").height() - 1)))
+      ? (axisHeight = i - (i * (maxValue - $(".graph").height())) / maxValue)
       : (axisHeight = i);
-    console.log(axisHeight, i);
     axisPoints.push(
       $(
-        `<div style='max-height:100%; height: ${
-          i !== 0 ? Math.ceil(axisHeight) : ""
+        `<div style='position: absolute; bottom: 0; left:0; max-height:100%; height: ${
+          i !== 0 ? Math.floor(axisHeight) : ""
         }px;'></div>`
-      ).text(Math.ceil(i))
+      ).text(Math.floor(i))
     );
   }
   return axisPoints;
