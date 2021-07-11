@@ -15,6 +15,8 @@ $(document).ready(function () {
         axisPoint: "broad", //broad (10%), precise (), average
       },
       barOptions: {
+        fontSize: "",
+        fontColor: "",
         spacing: "even", // around, between, even
         radius: "20%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center
@@ -26,6 +28,10 @@ $(document).ready(function () {
 });
 
 const drawBarChart = function (data, options, element) {
+  let gridArea = `"top-corner title title title"
+  "yAxis graph graph graph"
+  "yAxis graph graph graph"
+  "yAxis graph graph graph"`;
   let container = drawGraph(data, options);
   let { fontColor, fontSize } = options.graphOptions;
 
@@ -37,7 +43,6 @@ const drawBarChart = function (data, options, element) {
   }
 
   let newBars = drawBars(data, options.barOptions, data.length);
-
   for (let bar of newBars) {
     $(".graph").append(bar);
   }
@@ -45,11 +50,15 @@ const drawBarChart = function (data, options, element) {
   setBarSpacing(options.barOptions);
   setGridLines();
 
-  let title = $("<h2></h2>").text(options.graphOptions.title);
+  let title = $(
+    `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
+  );
   $(title).css("font-size", fontSize);
   $(title).css("color", fontColor);
-
   $(".title").append(title);
+
+  showLegend(data, options.barOptions);
+  // $(".container").css("grid-template-areas", gridArea);
 };
 
 const drawGraph = function (data, options) {
@@ -60,6 +69,8 @@ const drawGraph = function (data, options) {
   let bottomCorner = $("<div class='bottom-corner'></div>");
   let topCorner = $("<div class='top-corner'></div>");
   let title = $("<div class='title'></div>");
+  let legendSquare = $("<div class='square'></div>");
+  let legendTitle = $("<div class='label'></div>");
 
   container
     .append(yAxis)
@@ -67,7 +78,9 @@ const drawGraph = function (data, options) {
     .append(graph)
     .append(bottomCorner)
     .append(topCorner)
-    .append(title);
+    .append(title)
+    .append(legendSquare)
+    .append(legendTitle);
 
   return container;
 };
@@ -173,12 +186,13 @@ const drawAxis = function (data, options) {
     maxValue > $(".y-axis").height()
       ? (axisHeight = i * (1 - (maxValue / $(".y-axis").height() - 1)))
       : (axisHeight = i);
+    console.log(axisHeight, i);
     axisPoints.push(
       $(
         `<div style='max-height:100%; height: ${
           i !== 0 ? Math.ceil(axisHeight) : ""
         }px;'></div>`
-      ).text(i)
+      ).text(Math.ceil(i))
     );
   }
   return axisPoints;
@@ -227,4 +241,26 @@ const setGridLines = function () {
   let gridLine = $("<hr>");
 
   // $(".graph").append(gridLine);
+};
+
+const showLegend = function (data, options) {
+  let { barColor } = options;
+  let title = $("<h2>Legend</h2>");
+  let barLabel;
+  let barSquare;
+
+  $(".legend-title").append(title);
+
+  for (let i = 0; i < data.length; i++) {
+    barLabel = $(
+      `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
+        data[i]
+      )}</div>`
+    );
+    barSquare = $(
+      `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${barColor}'></div>`
+    );
+    $(".square").append(barSquare);
+    $(".label").append(barLabel);
+  }
 };

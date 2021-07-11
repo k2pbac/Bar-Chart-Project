@@ -1,20 +1,47 @@
 .container {
   margin: auto;
   display: grid;
-  width: 400px;
-  height: 350px;
+  width: 600px;
+  height: 550px;
   grid-template-areas:
-    "top-corner title title title"
-    "yAxis  graph graph graph"
-    "yAxis  graph graph graph"
-    "yAxis  graph graph graph"
-    "corner xAxis xAxis xAxis";
-  grid-template-rows: 50px 1fr 1fr 1fr 50px;
-  grid-template-columns: 50px 3fr;
+    "top-corner title title title legend-title legend-title"
+    "yAxis  graph graph graph square label"
+    "yAxis  graph graph graph square label"
+    "yAxis  graph graph graph square label"
+    "corner xAxis xAxis xAxis bottom-right bottom-right";
+  grid-template-rows: 50px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 50px 1fr 1fr 1fr 50px 100px;
+}
+
+.container > .legend-title {
+  grid-area: legend-title;
+  display: flex;
+  justify-content: center;
+}
+
+.container > .top-corner {
+  grid-area: bottom-right;
 }
 
 .container > .bottom-corner {
   grid-area: corner;
+  background-color: darkorchid;
+  min-width: 100%;
+}
+
+.square {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  grid-area: square;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  grid-area: label;
 }
 
 .container > .x-axis {
