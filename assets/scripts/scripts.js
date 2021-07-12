@@ -533,7 +533,7 @@ const showLegend = function (data, options) {
           tempColor = barColor;
         }
         barLabel = $(
-          `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
+          `<div style='margin-bottom: 7px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
             data[i]
           )}</div>`
         );
