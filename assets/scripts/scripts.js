@@ -1,22 +1,22 @@
 $(document).ready(function () {
   drawBarChart(
-    [
-      { pepsi: [{ May: 324 }, { June: 24 }] },
-      { coke: [{ September: 42 }, { March: 183 }] },
-      { gingerale: [{ April: 43 }] },
-      { dietcoke: [{ May: 344 }] },
-      { orange: [{ December: 95 }] },
-    ], // data , can be objects label-value, or multi-value-label
     // [
-    //   { pepsi: 324 },
-    //   { coke: 203 },
-    //   { gingerale: 23 },
-    //   { dietcoke: 344 },
-    //   { orange: 95 },
-    // ],
+    //   { pepsi: [{ May: 324 }, { June: 24 }] },
+    //   { coke: [{ September: 42 }, { March: 183 }] },
+    //   { gingerale: [{ April: 43 }] },
+    //   { dietcoke: [{ May: 344 }] },
+    //   { orange: [{ December: 95 }] },
+    // ], // data , can be objects label-value, or multi-value-label
+    [
+      { pepsi: 324 },
+      { coke: 203 },
+      { gingerale: 23 },
+      { dietcoke: 344 },
+      { orange: 95 },
+    ],
     {
       graphOptions: {
-        type: "multi", //Multi or Single - Stacked or regular
+        type: "single", //Multi or Single - Stacked or regular
         size: "medium", // small, medium, large, custom (any sizing), default: medium
         title: "Pop Statistics 2021", //any String
         fontSize: "1.5rem", //any sizing
@@ -35,20 +35,20 @@ $(document).ready(function () {
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center,
-        barColor: [
-          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-          ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
-          ["rgba(242, 120, 75, 1)"],
-          ["rgb(4, 147, 114)"],
-          ["rgba(123, 13, 199, 1)"],
-        ], // any type of color or array of colors
         // barColor: [
-        //   "rgba(189, 195, 199, 1)",
-        //   "rgba(1, 195, 199, 1)",
-        //   "rgba(189, 2, 199, 1)",
-        //   "rgba(189, 195, 123, 1)",
-        //   "rgba(123, 13, 199, 1)",
-        // ],
+        //   ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
+        //   ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
+        //   ["rgba(242, 120, 75, 1)"],
+        //   ["rgb(4, 147, 114)"],
+        //   ["rgba(123, 13, 199, 1)"],
+        // ], // any type of color or array of colors
+        barColor: [
+          "rgba(189, 195, 199, 1)",
+          "rgba(1, 195, 199, 1)",
+          "rgba(189, 2, 199, 1)",
+          "rgba(189, 195, 123, 1)",
+          "rgba(123, 13, 199, 1)",
+        ],
       },
     },
     $(".element-test") // element to load chart into
