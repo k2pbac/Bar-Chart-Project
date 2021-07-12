@@ -1,15 +1,22 @@
 $(document).ready(function () {
   drawBarChart(
+    // [
+    //   { pepsi: [{ May: 324 }, { June: 24 }] },
+    //   { coke: [{ September: 42 }, { March: 183 }] },
+    //   { gingerale: [{ April: 43 }] },
+    //   { dietcoke: [{ May: 344 }] },
+    //   { orange: [{ December: 95 }] },
+    // ], // data , can be objects label-value, or multi-value-label
     [
-      { pepsi: [{ May: 324 }, { June: 24 }] },
-      { coke: [{ September: 42 }, { March: 183 }] },
-      { gingerale: [{ April: 43 }] },
-      { dietcoke: [{ May: 344 }] },
-      { orange: [{ December: 95 }] },
-    ], // data , can be objects label-value, or multi-value-label
+      { pepsi: 324 },
+      { coke: 203 },
+      { gingerale: 23 },
+      { dietcoke: 344 },
+      { orange: 95 },
+    ],
     {
       graphOptions: {
-        type: "multi", //Multi or Single - Stacked or regular
+        type: "single", //Multi or Single - Stacked or regular
         size: "medium", // small, medium, large, custom (any sizing), default: medium
         title: "Pop Statistics 2021", //any String
         fontSize: "1.5rem", //any sizing
@@ -28,13 +35,20 @@ $(document).ready(function () {
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center,
+        // barColor: [
+        //   ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
+        //   ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
+        //   ["rgba(242, 120, 75, 1)"],
+        //   ["rgb(4, 147, 114)"],
+        //   ["rgba(123, 13, 199, 1)"],
+        // ], // any type of color or array of colors
         barColor: [
-          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-          ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
-          ["rgba(242, 120, 75, 1)"],
-          ["rgb(4, 147, 114)"],
-          ["rgba(123, 13, 199, 1)"],
-        ], // any type of color or array of colors
+          "rgba(189, 195, 199, 1)",
+          "rgba(1, 195, 199, 1)",
+          "rgba(189, 2, 199, 1)",
+          "rgba(189, 195, 123, 1)",
+          "rgba(123, 13, 199, 1)",
+        ],
       },
     },
     $(".element-test") // element to load chart into
@@ -105,20 +119,18 @@ const drawGraph = function (data, options) {
 
 // Multi bar (stacked) chart
 
-//Regular single bar chart
-
 const drawMultiBars = function (data, options, barCount) {
   let elements = [];
   let newElement;
   let currentBar = 0;
   let width = data.length * 10;
-  let maxValue = getLargestData(data);
+  let maxValue = getMultiLargestData(data);
 
   //Bar Styling
   let { radius, position, barColor, fontColor, fontSize } = options;
   let barDesign;
   let barSize;
-  let barValue = getDataValues(data);
+  let barValue = getMultiDataValues(data);
   let barLabel;
   let barHeight;
   let barPosition;
@@ -347,12 +359,22 @@ const drawBars = function (data, options, barCount) {
 //Helper function to generate the x and y axis
 
 const drawAxis = function (data, options) {
-  let { axisPoint } = options;
-  let maxValue = getLargestData(data);
+  let { axisPoint, type } = options;
+  let maxValue;
+  let dataValues;
+  switch (type) {
+    case "multi":
+      maxValue = getMultiLargestData(data);
+      dataValues = getMultiDataValues(data);
+      break;
+    case "single":
+      maxValue = getLargestData(data);
+      dataValues = getDataValues(data);
+  }
+
   let axisPoints = [];
   let axisUnits;
   let axisHeight;
-  let dataValues = getDataValues(data);
 
   switch (axisPoint) {
     case "precise":
@@ -396,7 +418,7 @@ const drawAxis = function (data, options) {
   return axisPoints;
 };
 
-const getLargestData = function (data) {
+const getMultiLargestData = function (data) {
   let maxValue = 0;
   let tempMax = 0;
   for (let obj of data) {
@@ -413,7 +435,7 @@ const getLargestData = function (data) {
   return tempMax;
 };
 
-const getDataValues = function (data) {
+const getMultiDataValues = function (data) {
   let dataValues = [];
 
   for (let i = 0; i < data.length; i++) {
@@ -424,6 +446,26 @@ const getDataValues = function (data) {
     } else {
       dataValues.push(parseInt(Object.values(data[i])));
     }
+  }
+  return dataValues;
+};
+
+const getLargestData = function (data) {
+  let maxValue = 0;
+  for (let obj of data) {
+    if (maxValue < parseInt(Object.values(obj))) {
+      maxValue = parseInt(Object.values(obj));
+    }
+  }
+
+  return maxValue;
+};
+
+const getDataValues = function (data) {
+  let dataValues = [];
+
+  for (let i = 0; i < data.length; i++) {
+    dataValues.push(parseInt(Object.values(data[i])));
   }
   return dataValues;
 };
@@ -492,8 +534,8 @@ const showLegend = function (data, options) {
   let barLabel;
   let barSquare;
   let tempColor;
-  let month = [];
-  let monthColors = [];
+  let legendLabel = [];
+  let legendColors = [];
   let tempLabel;
 
   $(".legend-title").append(title);
@@ -503,12 +545,14 @@ const showLegend = function (data, options) {
         for (let x = 0; x < barColor[i].length; x++) {
           if (
             Object.keys(Object.values(data[i])[0][x]) &&
-            !month.includes(Object.keys(Object.values(data[i])[0][x]) + "")
+            !legendLabel.includes(
+              Object.keys(Object.values(data[i])[0][x]) + ""
+            )
           ) {
             tempLabel = Object.keys(Object.values(data[i])[0][x]) + "";
             tempColor = barColor[i][x];
-            month.push(tempLabel);
-            monthColors.push(tempColor);
+            legendLabel.push(tempLabel);
+            legendColors.push(tempColor);
             barLabel = $(
               `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${tempLabel}</div>`
             );
@@ -518,8 +562,8 @@ const showLegend = function (data, options) {
             $(".square").append(barSquare);
             $(".label").append(barLabel);
           } else {
-            tempLabel = month[month.indexOf(tempLabel)];
-            tempColor = monthColors[month.indexOf(tempColor)];
+            tempLabel = legendLabel[legendLabel.indexOf(tempLabel)];
+            tempColor = legendColors[legendLabel.indexOf(tempColor)];
           }
           barLabel = "";
           barSquare = "";
@@ -536,6 +580,8 @@ const showLegend = function (data, options) {
         } else {
           tempColor = barColor[0];
         }
+      } else {
+        tempColor = barColor;
       }
       barLabel = $(
         `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
