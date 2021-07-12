@@ -1,11 +1,11 @@
 $(document).ready(function () {
   drawBarChart(
     [
-      { pepsi: [324, 24] },
-      { coke: [42, 183] },
-      { gingerale: 43 },
-      { dietcoke: 344 },
-      { orange: 95 },
+      { pepsi: [{ May: 324 }, { June: 24 }] },
+      { coke: [{ September: 42 }, { March: 183 }] },
+      { gingerale: [{ April: 43 }] },
+      { dietcoke: [{ May: 344 }] },
+      { orange: [{ December: 95 }] },
     ], // data , can be objects label-value, or multi-value-label
     {
       graphOptions: {
@@ -20,10 +20,10 @@ $(document).ready(function () {
         fontSize: "1.1rem", //any sizing
         fontColor: [
           ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-          "rgba(1, 195, 199, 1)",
-          "rgba(242, 120, 75, 1)",
-          "rgb(4, 147, 114)",
-          "rgba(123, 13, 199, 1)",
+          ["rgba(1, 195, 199, 1)]"],
+          ["rgba(242, 120, 75, 1)"],
+          ["rgb(4, 147, 114)"],
+          ["rgba(123, 13, 199, 1)"],
         ], // any color or array of colors
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
@@ -31,9 +31,9 @@ $(document).ready(function () {
         barColor: [
           ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
           ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
-          "rgba(242, 120, 75, 1)",
-          "rgb(4, 147, 114)",
-          "rgba(123, 13, 199, 1)",
+          ["rgba(242, 120, 75, 1)"],
+          ["rgb(4, 147, 114)"],
+          ["rgba(123, 13, 199, 1)"],
         ], // any type of color or array of colors
       },
     },
@@ -400,18 +400,16 @@ const getLargestData = function (data) {
   let maxValue = 0;
 
   for (let obj of data) {
-    if (Object.values(obj)[0].length) {
-      for (let el of Object.values(obj)[0]) {
-        maxValue += parseInt(el);
+    if (Object.values(obj)[0].length > 1) {
+      for (let i = 0; i < Object.values(obj)[0].length; i++) {
+        maxValue += parseInt(Object.values(obj)[0][i]);
+        console.log("here");
       }
-      return maxValue;
     } else {
-      if (maxValue < parseInt(Object.values(obj))) {
-        maxValue = parseInt(Object.values(obj));
-      }
+      console.log(Object.values(obj)[0], "small array");
     }
   }
-
+  console.log(maxValue);
   return maxValue;
 };
 
@@ -420,8 +418,8 @@ const getDataValues = function (data) {
 
   for (let i = 0; i < data.length; i++) {
     if (typeof Object.values(data[i])[0].length !== "undefined") {
-      for (let el of Object.values(data[i])) {
-        dataValues.push(el);
+      for (let x = 0; x < Object.values(data[i])[0].length; x++) {
+        dataValues.push(parseInt(Object.values(Object.values(data[i])[0][x])));
       }
     } else {
       dataValues.push(parseInt(Object.values(data[i])));
@@ -494,54 +492,40 @@ const showLegend = function (data, options) {
   let barLabel;
   let barSquare;
   let tempColor;
+  let month = [];
+  let monthColors = [];
+  let tempLabel;
 
   $(".legend-title").append(title);
   if (type === "multi") {
     for (let i = 0; i < data.length; i++) {
       if (Array.isArray(barColor[i])) {
         for (let x = 0; x < barColor[i].length; x++) {
-          if (barColor[i][x]) {
-            if (typeof barColor[i][x] !== "undefined") {
-              tempColor = barColor[i][x];
-            } else {
-              tempColor = barColor[0];
-            }
+          if (
+            Object.keys(Object.values(data[i])[0][x]) &&
+            !month.includes(Object.keys(Object.values(data[i])[0][x]) + "")
+          ) {
+            tempLabel = Object.keys(Object.values(data[i])[0][x]) + "";
+            tempColor = barColor[i][x];
+            month.push(tempLabel);
+            monthColors.push(tempColor);
+            barLabel = $(
+              `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${tempLabel}</div>`
+            );
+            barSquare = $(
+              `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
+            );
+            $(".square").append(barSquare);
+            $(".label").append(barLabel);
           } else {
-            tempColor = barColor;
+            tempLabel = month[month.indexOf(tempLabel)];
+            tempColor = monthColors[month.indexOf(tempColor)];
           }
-          barLabel = $(
-            `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
-              data[i]
-            )}</div>`
-          );
-          barSquare = $(
-            `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
-          );
-          $(".square").append(barSquare);
-          $(".label").append(barLabel);
           barLabel = "";
           barSquare = "";
+          tempColor = "";
+          tempLabel = "";
         }
-      } else {
-        if (Array.isArray(barColor)) {
-          if (typeof barColor[i] !== "undefined") {
-            tempColor = barColor[i];
-          } else {
-            tempColor = barColor[0];
-          }
-        } else {
-          tempColor = barColor;
-        }
-        barLabel = $(
-          `<div style='margin-bottom: 7px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
-            data[i]
-          )}</div>`
-        );
-        barSquare = $(
-          `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
-        );
-        $(".square").append(barSquare);
-        $(".label").append(barLabel);
       }
     }
   } else {
@@ -552,8 +536,6 @@ const showLegend = function (data, options) {
         } else {
           tempColor = barColor[0];
         }
-      } else {
-        tempColor = barColor;
       }
       barLabel = $(
         `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
