@@ -18,10 +18,15 @@ $(document).ready(function () {
       graphOptions: {
         type: "single", //Multi or Single - Stacked or regular
         size: "medium", // small, medium, large, custom (any sizing), default: medium
-        title: "Pop Statistics 2021", //any String
+        title: "Pop Sales 2021", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
         axisPoint: "broad", //broad , precise , average , default: broad
+        yLabel: "Sales",
+        yLabelFontSize: "1.2rem",
+        xLabel: "Product",
+        xLabelFontSize: "1.2rem",
+        yMeasurement: "(in millions)",
       },
       barOptions: {
         fontSize: "1.1rem", //any sizing
@@ -94,6 +99,8 @@ const drawBarChart = function (data, options, element) {
 };
 
 const drawGraph = function (data, options) {
+  let { xLabelFontSize, xLabel, yLabel, yLabelFontSize, yMeasurement } =
+    options.graphOptions;
   let container = $("<div class='container'></div>");
   let yAxis = $("<div class='y-axis'></div>");
   let xAxis = $("<div class='x-axis'></div>");
@@ -103,6 +110,18 @@ const drawGraph = function (data, options) {
   let title = $("<div class='title'></div>");
   let legendSquare = $("<div class='square'></div>");
   let legendTitle = $("<div class='label'></div>");
+  let yAxisLabel = $("<div class='yLabel'></div>");
+  let yLabelElement = $(
+    `<span style='white-space: nowrap; transform: rotate(-90deg);'>${yLabel}${yMeasurement}</span>`
+  );
+  let xAxisLabel = $("<div class='xLabel'</div>");
+  let xLabelElement = $(`<p>${xLabel}</p>`);
+  $(xLabel).css("font-size", xLabelFontSize);
+  $(yLabel).css("font-size", yLabelFontSize);
+
+  $(xAxisLabel).append(xLabelElement);
+
+  $(yAxisLabel).append(yLabelElement);
 
   container
     .append(yAxis)
@@ -112,7 +131,9 @@ const drawGraph = function (data, options) {
     .append(topCorner)
     .append(title)
     .append(legendSquare)
-    .append(legendTitle);
+    .append(legendTitle)
+    .append(yAxisLabel)
+    .append(xAxisLabel);
 
   return container;
 };
@@ -530,7 +551,6 @@ const setDimensions = function (options) {
 const showLegend = function (data, options) {
   let { barColor } = options.barOptions;
   let { type } = options.graphOptions;
-  let title = $("<h2>Legend</h2>");
   let barLabel;
   let barSquare;
   let tempColor;
@@ -538,7 +558,6 @@ const showLegend = function (data, options) {
   let legendColors = [];
   let tempLabel;
 
-  $(".legend-title").append(title);
   if (type === "multi") {
     for (let i = 0; i < data.length; i++) {
       if (Array.isArray(barColor[i])) {
