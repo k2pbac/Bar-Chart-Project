@@ -176,10 +176,10 @@ const drawMultiBars = function (data, options, barCount) {
         );
 
         maxValue < $(".graph").height()
-          ? (barHeight = Object.values(data[currentBar])[0][i])
+          ? (barHeight = Object.values(Object.values(data[currentBar])[0][i]))
           : (barHeight =
-              Object.values(data[currentBar])[0][i] -
-              (Object.values(data[currentBar])[0][i] *
+              Object.values(Object.values(data[currentBar])[0][i]) -
+              (Object.values(Object.values(data[currentBar])[0][i]) *
                 (maxValue - $(".graph").height())) /
                 maxValue);
         barPosition = `display: flex; justify-content: center; align-items: ${position};`;
@@ -191,7 +191,7 @@ const drawMultiBars = function (data, options, barCount) {
         styling = barSize + " " + barDesign + " " + barPosition;
 
         newElement = $(`<div style='${styling}'></div>`).text(
-          Object.values(data[currentBar])[0][i]
+          Object.values(Object.values(data[currentBar])[0][i])
         );
         $(stackedBar).append(newElement);
         newElement = "";
@@ -398,19 +398,19 @@ const drawAxis = function (data, options) {
 
 const getLargestData = function (data) {
   let maxValue = 0;
-
+  let tempMax = 0;
   for (let obj of data) {
-    if (Object.values(obj)[0].length > 1) {
+    if (Object.values(obj)[0].length) {
       for (let i = 0; i < Object.values(obj)[0].length; i++) {
-        maxValue += parseInt(Object.values(obj)[0][i]);
-        console.log("here");
+        maxValue += parseInt(Object.values(Object.values(obj)[0][i]));
       }
-    } else {
-      console.log(Object.values(obj)[0], "small array");
+      if (tempMax < maxValue) {
+        tempMax = maxValue;
+      }
     }
+    maxValue = 0;
   }
-  console.log(maxValue);
-  return maxValue;
+  return tempMax;
 };
 
 const getDataValues = function (data) {
