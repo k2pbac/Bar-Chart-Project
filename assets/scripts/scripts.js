@@ -27,6 +27,7 @@ $(document).ready(function () {
         xLabel: "Product",
         xLabelFontSize: "1.2rem",
         yMeasurement: "(in millions)",
+        gridLines: true, // true or false for showing gridlines
       },
       barOptions: {
         fontSize: "1.1rem", //any sizing
@@ -86,7 +87,6 @@ const drawBarChart = function (data, options, element) {
   }
 
   setBarSpacing(options.barOptions);
-  setGridLines();
   showLegend(data, options);
   setDimensions(options.graphOptions);
 
@@ -99,12 +99,22 @@ const drawBarChart = function (data, options, element) {
 };
 
 const drawGraph = function (data, options) {
-  let { xLabelFontSize, xLabel, yLabel, yLabelFontSize, yMeasurement } =
-    options.graphOptions;
+  let {
+    xLabelFontSize,
+    xLabel,
+    yLabel,
+    yLabelFontSize,
+    yMeasurement,
+    gridLines,
+  } = options.graphOptions;
   let container = $("<div class='container'></div>");
   let yAxis = $("<div class='y-axis'></div>");
   let xAxis = $("<div class='x-axis'></div>");
-  let graph = $("<div class='graph pattern-grid-lg bg-white'></div>");
+  let graph = $(
+    `<div class='graph ${
+      gridLines ? " pattern-grid-lg " : " "
+    } bg-white'></div>`
+  );
   let bottomCorner = $("<div class='bottom-corner'></div>");
   let topCorner = $("<div class='top-corner'></div>");
   let title = $("<div class='title'></div>");
@@ -508,12 +518,6 @@ const setBarSpacing = function (options) {
 
   $(".container > .graph").css("justify-content", spacing);
   $(".container > .x-axis").css("justify-content", spacing);
-};
-
-const setGridLines = function () {
-  let gridLine = $("<hr>");
-
-  // $(".graph").append(gridLine);
 };
 
 const setDimensions = function (options) {
