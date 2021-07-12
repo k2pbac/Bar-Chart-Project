@@ -1,14 +1,15 @@
 $(document).ready(function () {
   drawBarChart(
     [
-      { pepsi: 324 },
-      { coke: 203 },
+      { pepsi: [324, 24] },
+      { coke: [42, 183] },
       { gingerale: 23 },
       { dietcoke: 344 },
       { orange: 95 },
-    ],
+    ], // data , can be objects label-value, or multi-value-label
     {
       graphOptions: {
+        type: "multi", //Multi or Single - Stacked or regular
         size: "medium", // small, medium, large, custom (any sizing), default: medium
         title: "Pop Statistics 2021", //any String
         fontSize: "1.5rem", //any sizing
@@ -16,26 +17,33 @@ $(document).ready(function () {
         axisPoint: "broad", //broad , precise , average , default: broad
       },
       barOptions: {
-        fontSize: "",
-        fontColor: "",
-        spacing: "even", // around, between, even
-        radius: "20%", // 0 - 100%
-        position: "bottom", // top, bottom, center , default: center,
-        barColor: [
-          "rgba(189, 195, 199, 1)",
+        fontSize: "1.1rem", //any sizing
+        fontColor: [
+          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
           "rgba(1, 195, 199, 1)",
           "rgba(189, 2, 199, 1)",
           "rgba(189, 195, 123, 1)",
           "rgba(123, 13, 199, 1)",
-        ], // any type of color
+        ], // any color or array of colors
+        spacing: "even", // around, between, even
+        radius: "0%", // 0 - 100%
+        position: "bottom", // top, bottom, center , default: center,
+        barColor: [
+          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
+          ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
+          "rgba(189, 2, 199, 1)",
+          "rgba(189, 195, 123, 1)",
+          "rgba(123, 13, 199, 1)",
+        ], // any type of color or array of colors
       },
     },
-    $(".element-test")
+    $(".element-test") // element to load chart into
   );
 });
 
 const drawBarChart = function (data, options, element) {
   let container = drawGraph(data, options);
+  let newBars;
   let { fontColor, fontSize } = options.graphOptions;
 
   $(element).append(container);
@@ -46,9 +54,16 @@ const drawBarChart = function (data, options, element) {
     $(".y-axis").append(axisPoint);
   }
 
-  let newBars = drawBars(data, options.barOptions, data.length);
-  for (let bar of newBars) {
-    $(".graph").append(bar);
+  if (options.graphOptions.type === "multi") {
+    newBars = drawMultiBars(data, options.barOptions, data.length);
+    for (let bar of newBars) {
+      $(".graph").append(bar);
+    }
+  } else {
+    newBars = drawBars(data, options.barOptions, data.length);
+    for (let bar of newBars) {
+      $(".graph").append(bar);
+    }
   }
 
   setBarSpacing(options.barOptions);
@@ -88,7 +103,11 @@ const drawGraph = function (data, options) {
   return container;
 };
 
-const drawBars = function (data, options, barCount) {
+// Multi bar (stacked) chart
+
+//Regular single bar chart
+
+const drawMultiBars = function (data, options, barCount) {
   let elements = [];
   let newElement;
   let currentBar = 0;
@@ -96,7 +115,7 @@ const drawBars = function (data, options, barCount) {
   let maxValue = getLargestData(data);
 
   //Bar Styling
-  let { radius, position, barColor } = options;
+  let { radius, position, barColor, fontColor, fontSize } = options;
   let barDesign;
   let barSize;
   let barValue = getDataValues(data);
@@ -104,6 +123,7 @@ const drawBars = function (data, options, barCount) {
   let barHeight;
   let barPosition;
   let tempColor;
+  let labelColor;
 
   switch (position) {
     case "top":
@@ -120,6 +140,154 @@ const drawBars = function (data, options, barCount) {
   }
 
   while (barCount > 0) {
+    if (Array.isArray(Object.values(data[currentBar])[0])) {
+      let stackedBar = $("<div></div>");
+      let count = 0;
+
+      for (let i = 0; i < Object.values(data[currentBar])[0].length; i++) {
+        // Font color for bar
+        if (Array.isArray(barColor)) {
+          if (typeof barColor[currentBar] !== "undefined") {
+            tempColor = barColor[currentBar][i];
+          } else {
+            tempColor = barColor[0];
+          }
+        } else {
+          tempColor = barColor;
+        }
+        // Font color for label
+        if (Array.isArray(fontColor)) {
+          if (typeof fontColor[currentBar] !== "undefined") {
+            labelColor = fontColor[currentBar][i];
+          } else {
+            labelColor = fontColor[0];
+          }
+        } else {
+          labelColor = fontColor;
+        }
+        barLabel = $(
+          `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
+            data[currentBar]
+          )}</h1>`
+        );
+
+        maxValue < $(".graph").height()
+          ? (barHeight = Object.values(data[currentBar])[0][i])
+          : (barHeight =
+              Object.values(data[currentBar])[0][i] -
+              (Object.values(data[currentBar])[0][i] *
+                (maxValue - $(".graph").height())) /
+                maxValue);
+        barPosition = `display: flex; justify-content: center; align-items: ${position};`;
+
+        barSize = `max-height:100%; height: ${Math.floor(
+          barHeight - 3
+        )}px; width: ${width}px;`;
+        barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
+        styling = barSize + " " + barDesign + " " + barPosition;
+
+        newElement = $(`<div style='${styling}'></div>`).text(
+          Object.values(data[currentBar])[0][i]
+        );
+        $(stackedBar).append(newElement);
+        newElement = "";
+        count++;
+      }
+      $(".x-axis").append(barLabel);
+      elements.push(stackedBar);
+      stackedBar = "";
+    } else {
+      // Font color for bar
+      if (Array.isArray(barColor)) {
+        if (typeof barColor[currentBar] !== "undefined") {
+          tempColor = barColor[currentBar];
+        } else {
+          tempColor = barColor[0];
+        }
+      } else {
+        tempColor = barColor;
+      }
+      // Font color for label
+      if (Array.isArray(fontColor)) {
+        if (typeof fontColor[currentBar] !== "undefined") {
+          labelColor = fontColor[currentBar];
+        } else {
+          labelColor = fontColor[0];
+        }
+      } else {
+        labelColor = fontColor;
+      }
+
+      barLabel = $(
+        `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
+          data[currentBar]
+        )}</h1>`
+      );
+      maxValue < $(".graph").height()
+        ? (barHeight = parseInt(barValue[currentBar]))
+        : (barHeight =
+            barValue[currentBar] -
+            (barValue[currentBar] * (maxValue - $(".graph").height())) /
+              maxValue);
+
+      barPosition = `display: flex; justify-content: center; align-items: ${position};`;
+
+      barSize = `max-height:100%; height: ${Math.floor(
+        barHeight - 3
+      )}px; width: ${width}px;`;
+      barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
+      styling = barSize + " " + barDesign + " " + barPosition;
+
+      newElement = $(`<div style='${styling}'></div>`).text(
+        barValue[currentBar]
+      );
+
+      $(".x-axis").append(barLabel);
+      elements.push(newElement);
+    }
+    newElement = "";
+    barCount--;
+    currentBar++;
+  }
+  return elements;
+};
+
+//Regular single bar chart
+
+const drawBars = function (data, options, barCount) {
+  let elements = [];
+  let newElement;
+  let currentBar = 0;
+  let width = data.length * 10;
+  let maxValue = getLargestData(data);
+
+  //Bar Styling
+  let { radius, position, barColor, fontColor, fontSize } = options;
+  let barDesign;
+  let barSize;
+  let barValue = getDataValues(data);
+  let barLabel;
+  let barHeight;
+  let barPosition;
+  let tempColor;
+  let labelColor;
+
+  switch (position) {
+    case "top":
+      position = "flex-start";
+      break;
+    case "center":
+      position = "center";
+      break;
+    case "bottom":
+      position = "flex-end";
+      break;
+    default:
+      position = "center";
+  }
+
+  while (barCount > 0) {
+    // Font color for bar
     if (Array.isArray(barColor)) {
       if (typeof barColor[currentBar] !== "undefined") {
         tempColor = barColor[currentBar];
@@ -129,9 +297,21 @@ const drawBars = function (data, options, barCount) {
     } else {
       tempColor = barColor;
     }
+    // Font color for label
+    if (Array.isArray(fontColor)) {
+      if (typeof fontColor[currentBar] !== "undefined") {
+        labelColor = fontColor[currentBar];
+      } else {
+        labelColor = fontColor[0];
+      }
+    } else {
+      labelColor = fontColor;
+    }
 
     barLabel = $(
-      `<h1 style='font-size: 1.2rem;'>${Object.keys(data[currentBar])}</h1>`
+      `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
+        data[currentBar]
+      )}</h1>`
     );
     maxValue < $(".graph").height()
       ? (barHeight = parseInt(barValue[currentBar]))
@@ -152,6 +332,7 @@ const drawBars = function (data, options, barCount) {
 
     $(".x-axis").append(barLabel);
     elements.push(newElement);
+
     newElement = "";
     barCount--;
     currentBar++;
@@ -213,7 +394,11 @@ const drawAxis = function (data, options) {
 
 const getLargestData = function (data) {
   let maxValue = 0;
+
   for (let obj of data) {
+    if (Object.values(obj)[0]) {
+      console.log(Object.values(obj)[0]);
+    }
     if (maxValue < parseInt(Object.values(obj))) {
       maxValue = parseInt(Object.values(obj));
     }
@@ -226,7 +411,13 @@ const getDataValues = function (data) {
   let dataValues = [];
 
   for (let i = 0; i < data.length; i++) {
-    dataValues.push(parseInt(Object.values(data[i])));
+    if (typeof Object.values(data[i])[0].length !== "undefined") {
+      for (let el of Object.values(data[i])) {
+        dataValues.push(el);
+      }
+    } else {
+      dataValues.push(parseInt(Object.values(data[i])));
+    }
   }
   return dataValues;
 };
