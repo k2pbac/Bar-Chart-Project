@@ -3,7 +3,7 @@ $(document).ready(function () {
     [
       { pepsi: [324, 24] },
       { coke: [42, 183] },
-      { gingerale: 23 },
+      { gingerale: 43 },
       { dietcoke: 344 },
       { orange: 95 },
     ], // data , can be objects label-value, or multi-value-label
@@ -21,8 +21,8 @@ $(document).ready(function () {
         fontColor: [
           ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
           "rgba(1, 195, 199, 1)",
-          "rgba(189, 2, 199, 1)",
-          "rgba(189, 195, 123, 1)",
+          "rgba(242, 120, 75, 1)",
+          "rgb(4, 147, 114)",
           "rgba(123, 13, 199, 1)",
         ], // any color or array of colors
         spacing: "even", // around, between, even
@@ -31,8 +31,8 @@ $(document).ready(function () {
         barColor: [
           ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
           ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
-          "rgba(189, 2, 199, 1)",
-          "rgba(189, 195, 123, 1)",
+          "rgba(242, 120, 75, 1)",
+          "rgb(4, 147, 114)",
           "rgba(123, 13, 199, 1)",
         ], // any type of color or array of colors
       },
@@ -68,7 +68,7 @@ const drawBarChart = function (data, options, element) {
 
   setBarSpacing(options.barOptions);
   setGridLines();
-  showLegend(data, options.barOptions);
+  showLegend(data, options);
   setDimensions(options.graphOptions);
 
   let title = $(
@@ -158,7 +158,11 @@ const drawMultiBars = function (data, options, barCount) {
         // Font color for label
         if (Array.isArray(fontColor)) {
           if (typeof fontColor[currentBar] !== "undefined") {
-            labelColor = fontColor[currentBar][i];
+            if (Array.isArray(fontColor[currentBar])) {
+              labelColor = fontColor[currentBar][i];
+            } else {
+              labelColor = fontColor[currentBar];
+            }
           } else {
             labelColor = fontColor[0];
           }
@@ -484,33 +488,83 @@ const setDimensions = function (options) {
 };
 
 const showLegend = function (data, options) {
-  let { barColor } = options;
+  let { barColor } = options.barOptions;
+  let { type } = options.graphOptions;
   let title = $("<h2>Legend</h2>");
   let barLabel;
   let barSquare;
   let tempColor;
 
   $(".legend-title").append(title);
-
-  for (let i = 0; i < data.length; i++) {
-    if (Array.isArray(barColor)) {
-      if (typeof barColor[i] !== "undefined") {
-        tempColor = barColor[i];
+  if (type === "multi") {
+    for (let i = 0; i < data.length; i++) {
+      if (Array.isArray(barColor[i])) {
+        for (let x = 0; x < barColor[i].length; x++) {
+          if (barColor[i][x]) {
+            if (typeof barColor[i][x] !== "undefined") {
+              tempColor = barColor[i][x];
+            } else {
+              tempColor = barColor[0];
+            }
+          } else {
+            tempColor = barColor;
+          }
+          barLabel = $(
+            `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
+              data[i]
+            )}</div>`
+          );
+          barSquare = $(
+            `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
+          );
+          $(".square").append(barSquare);
+          $(".label").append(barLabel);
+          barLabel = "";
+          barSquare = "";
+        }
       } else {
-        tempColor = barColor[0];
+        if (Array.isArray(barColor)) {
+          if (typeof barColor[i] !== "undefined") {
+            tempColor = barColor[i];
+          } else {
+            tempColor = barColor[0];
+          }
+        } else {
+          tempColor = barColor;
+        }
+        barLabel = $(
+          `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
+            data[i]
+          )}</div>`
+        );
+        barSquare = $(
+          `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
+        );
+        $(".square").append(barSquare);
+        $(".label").append(barLabel);
       }
-    } else {
-      tempColor = barColor;
     }
-    barLabel = $(
-      `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
-        data[i]
-      )}</div>`
-    );
-    barSquare = $(
-      `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
-    );
-    $(".square").append(barSquare);
-    $(".label").append(barLabel);
+  } else {
+    for (let i = 0; i < data.length; i++) {
+      if (Array.isArray(barColor)) {
+        if (typeof barColor[i] !== "undefined") {
+          tempColor = barColor[i];
+        } else {
+          tempColor = barColor[0];
+        }
+      } else {
+        tempColor = barColor;
+      }
+      barLabel = $(
+        `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
+          data[i]
+        )}</div>`
+      );
+      barSquare = $(
+        `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
+      );
+      $(".square").append(barSquare);
+      $(".label").append(barLabel);
+    }
   }
 };
