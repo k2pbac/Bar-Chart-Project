@@ -66,7 +66,6 @@
 .container > .y-axis {
   grid-area: yAxis;
   position: relative;
-  padding-right: 5px;
 }
 
 .container > .title {

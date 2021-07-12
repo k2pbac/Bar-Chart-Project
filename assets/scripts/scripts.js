@@ -396,11 +396,15 @@ const getLargestData = function (data) {
   let maxValue = 0;
 
   for (let obj of data) {
-    if (Object.values(obj)[0]) {
-      console.log(Object.values(obj)[0]);
-    }
-    if (maxValue < parseInt(Object.values(obj))) {
-      maxValue = parseInt(Object.values(obj));
+    if (Object.values(obj)[0].length) {
+      for (let el of Object.values(obj)[0]) {
+        maxValue += parseInt(el);
+      }
+      return maxValue;
+    } else {
+      if (maxValue < parseInt(Object.values(obj))) {
+        maxValue = parseInt(Object.values(obj));
+      }
     }
   }
 
