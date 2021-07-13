@@ -1,6 +1,6 @@
 $(document).ready(function () {
   drawBarChart(
-    [{ iPhone_11: 189 }, { galaxy_note_20: 149 }, { sonim_XP5S: 82 }],
+    [{ iPhone_11: 18 }, { galaxy_note_20: 149 }, { sonim_XP5S: 82 }],
     {
       graphOptions: {
         type: "single", //Multi or Single - Stacked or regular
@@ -14,7 +14,7 @@ $(document).ready(function () {
         xLabel: "Products",
         xLabelFontSize: "1.2rem",
         yMeasurement: " (in millions)",
-        gridLines: true, // true or false for showing gridlines
+        gridLines: false, // true or false for showing gridlines
       },
       barOptions: {
         fontSize: "1.1rem", //any sizing
