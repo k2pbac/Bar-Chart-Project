@@ -85,6 +85,15 @@ gridLines | true or false | This value displays the gridlines on the back of the
 
 These options are accessed by passing in a barOptions (case sensitive) Object
 
+Key | Value | Description
+------------ | ------------- | -------------
+spacing | "even" or "between" or "around" | <ul><li>The value 'even' will evenly space out the bars within the graph.</li><li>The value 'between' will put space between the bars.</li><li>The value 'around' will put space around the bars, between the graph and the bars.</li></ul>
+radius | A String that contains a percentage between 0 - 100 (with % included) | The radius controls the radius of the bar 
+fontSize | A String with any sizing | Change the font size of the text within the bar
+fontColor | An Array of Strings | Each string will contain a color for the text within each bar. Not inputting an equal amount of colors for values will result in default text color of black.
+position | "top" or "bottom" or "center" | <ul><li>The value 'top' will position the text within the bar at the top of the bar.</li><li>The value 'bottom' will position the text within the bar at the bottom of the bar.</li><li>The value 'center' will position the text within the bar at the center of the bar.</li></ul>
+barColor | An Array of String | Each string will contain a color for the background of the bar. Not inputting an equal amount of colors for values will result in the first color (if one exists) as the color for the bars that don't have a color. 
+
 
 
 
