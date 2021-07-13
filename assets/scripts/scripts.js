@@ -1,19 +1,59 @@
 $(document).ready(function () {
   drawBarChart(
     [
+      { pepsi: 324 },
+      { coke: 203 },
+      { gingerale: 23 },
+      { dietcoke: 344 },
+      { orange: 95 },
+    ],
+    {
+      graphOptions: {
+        type: "single", //Multi or Single - Stacked or regular
+        size: "large", // small, medium, large, custom (any sizing), default: medium
+        title: "Pop Sales 2021", //any String
+        fontSize: "1.5rem", //any sizing
+        fontColor: "rgb(23,23,12)", // any color
+        axisPoint: "broad", //broad , precise , average , default: broad
+        yLabel: "Sales",
+        yLabelFontSize: "1.2rem",
+        xLabel: "Product",
+        xLabelFontSize: "1.2rem",
+        yMeasurement: "(in millions)",
+        gridLines: true, // true or false for showing gridlines
+      },
+      barOptions: {
+        fontSize: "1.1rem", //any sizing
+        fontColor: [
+          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
+          ["rgba(1, 195, 199, 1)"],
+          ["rgba(242, 120, 75, 1)"],
+          ["rgb(4, 147, 114)"],
+          ["rgba(123, 13, 199, 1)"],
+        ], // any color or array of colors
+        spacing: "even", // around, between, even
+        radius: "0%", // 0 - 100%
+        position: "bottom", // top, bottom, center , default: center,
+        // any type of color or array of colors
+        barColor: [
+          "rgba(189, 195, 199, 1)",
+          "rgba(1, 195, 199, 1)",
+          "rgba(189, 2, 199, 1)",
+          "rgba(189, 195, 123, 1)",
+          "rgba(123, 13, 199, 1)",
+        ],
+      },
+    },
+    $(".element-test2")
+  );
+  drawBarChart(
+    [
       { pepsi: [{ may: 324 }, { June: 24 }] },
       { coke: [{ September: 42 }, { March: 183 }] },
       { ginger_ale: [{ April: 43 }] },
       { diet_coke: [{ July: 344 }] },
       { orange: [{ December: 95 }] },
     ], // data , can be objects label-value, or multi-value-label
-    // [
-    //   { pepsi: 324 },
-    //   { coke: 203 },
-    //   { gingerale: 23 },
-    //   { dietcoke: 344 },
-    //   { orange: 95 },
-    // ],
     {
       graphOptions: {
         type: "multi", //Multi or Single - Stacked or regular
@@ -48,13 +88,6 @@ $(document).ready(function () {
           ["rgb(4, 147, 114)"],
           ["rgba(123, 13, 199, 1)"],
         ], // any type of color or array of colors
-        // barColor: [
-        //   "rgba(189, 195, 199, 1)",
-        //   "rgba(1, 195, 199, 1)",
-        //   "rgba(189, 2, 199, 1)",
-        //   "rgba(189, 195, 123, 1)",
-        //   "rgba(123, 13, 199, 1)",
-        // ],
       },
     },
     $(".element-test") // element to load chart into
@@ -63,42 +96,14 @@ $(document).ready(function () {
 
 const drawBarChart = function (data, options, element) {
   let container = drawGraph(data, options);
-  let newBars;
-  let { fontColor, fontSize } = options.graphOptions;
 
   $(element).append(container);
-
-  let axisPoints = drawAxis(data, options.graphOptions);
-
-  for (let axisPoint of axisPoints) {
-    $(".y-axis").append(axisPoint);
-  }
-
-  if (options.graphOptions.type === "multi") {
-    newBars = drawMultiBars(data, options.barOptions, data.length);
-    for (let bar of newBars) {
-      $(".graph").append(bar);
-    }
-  } else {
-    newBars = drawBars(data, options.barOptions, data.length);
-    for (let bar of newBars) {
-      $(".graph").append(bar);
-    }
-  }
-
   setBarSpacing(options.barOptions);
-  showLegend(data, options);
-  setDimensions(options.graphOptions);
 
-  let title = $(
-    `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
-  );
-  $(title).css("font-size", fontSize);
-  $(title).css("color", fontColor);
-  $(".title").append(title);
+  let { height, width } = getDimensions(options.graphOptions);
 };
 
-const drawGraph = function (data, options) {
+const getElements = function (data, options) {
   let {
     xLabelFontSize,
     xLabel,
@@ -107,7 +112,8 @@ const drawGraph = function (data, options) {
     yMeasurement,
     gridLines,
   } = options.graphOptions;
-  let container = $("<div class='container'></div>");
+  let { fontColor, fontSize } = options.graphOptions;
+  let elements = {};
   let yAxis = $("<div class='y-axis'></div>");
   let xAxis = $("<div class='x-axis'></div>");
   let graph = $(
@@ -126,24 +132,65 @@ const drawGraph = function (data, options) {
   );
   let xAxisLabel = $("<div class='xLabel'</div>");
   let xLabelElement = $(`<p>${xLabel}</p>`);
+  let titleValue = $(
+    `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
+  );
+  $(titleValue).css("font-size", fontSize);
+  $(titleValue).css("color", fontColor);
+  $(title).append(titleValue);
+
   $(xLabel).css("font-size", xLabelFontSize);
   $(yLabel).css("font-size", yLabelFontSize);
 
   $(xAxisLabel).append(xLabelElement);
-
   $(yAxisLabel).append(yLabelElement);
+  elements.yAxis = yAxis;
+  elements.xAxis = xAxis;
+  elements.graph = graph;
+  elements.bottomCorner = bottomCorner;
+  elements.topCorner = topCorner;
+  elements.title = title;
+  elements.legendSquare = legendSquare;
+  elements.yAxisLabel = yAxisLabel;
+  elements.xAxisLabel = xAxisLabel;
+  elements.legendTitle = legendTitle;
 
-  container
-    .append(yAxis)
-    .append(xAxis)
-    .append(graph)
-    .append(bottomCorner)
-    .append(topCorner)
-    .append(title)
-    .append(legendSquare)
-    .append(legendTitle)
-    .append(yAxisLabel)
-    .append(xAxisLabel);
+  return elements;
+};
+
+const drawGraph = function (data, options) {
+  let container = $("<div class='container'></div>");
+  let elements = getElements(data, options);
+  let newLegend = showLegend(data, options);
+  let newBars;
+  let axisPoints = drawAxis(data, options.graphOptions);
+
+  for (let axisPoint of axisPoints) {
+    $(elements.yAxis).append(axisPoint);
+  }
+
+  if (options.graphOptions.type === "multi") {
+    newBars = drawMultiBars(data, options, data.length);
+    for (let i = 0; i < data.length; i++) {
+      $(elements.graph).append(Object.values(newBars)[0][i]);
+      $(elements.xAxis).append(Object.values(newBars)[1][i]);
+    }
+  } else {
+    newBars = drawBars(data, options, data.length);
+    for (let i = 0; i < data.length; i++) {
+      $(elements.graph).append(Object.values(newBars)[0][i]);
+      $(elements.xAxis).append(Object.values(newBars)[1][i]);
+    }
+  }
+
+  for (let x = 0; x < newLegend.squares.length; x++) {
+    $(elements.legendSquare).append(Object.values(newLegend)[0][x]);
+    $(elements.legendTitle).append(Object.values(newLegend)[1][x]);
+  }
+
+  for (let y = 0; y < Object.values(elements).length; y++) {
+    $(container).append(Object.values(elements)[y]);
+  }
 
   return container;
 };
@@ -151,14 +198,15 @@ const drawGraph = function (data, options) {
 // Multi bar (stacked) chart
 
 const drawMultiBars = function (data, options, barCount) {
+  let { height } = getDimensions(options.graphOptions);
   let elements = [];
+  let labels = [];
   let newElement;
   let currentBar = 0;
-  let width = data.length * 10;
+  let barWidth = data.length * 10;
   let maxValue = getMultiLargestData(data);
-
   //Bar Styling
-  let { radius, position, barColor, fontColor, fontSize } = options;
+  let { radius, position, barColor, fontColor, fontSize } = options.barOptions;
   let barDesign;
   let barSize;
   let barValue = getMultiDataValues(data);
@@ -214,25 +262,24 @@ const drawMultiBars = function (data, options, barCount) {
         } else {
           labelColor = fontColor;
         }
-        console.log(Object.keys(data[currentBar]) + "");
         barLabel = $(
           `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
             Object.keys(data[currentBar]) + ""
           )}</h1>`
         );
 
-        maxValue < $(".graph").height()
+        maxValue < height - 120
           ? (barHeight = Object.values(Object.values(data[currentBar])[0][i]))
           : (barHeight =
               Object.values(Object.values(data[currentBar])[0][i]) -
               (Object.values(Object.values(data[currentBar])[0][i]) *
-                (maxValue - $(".graph").height())) /
+                (maxValue - (height - 120))) /
                 maxValue);
         barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
         barSize = `max-height:100%; height: ${Math.floor(
           barHeight - 3
-        )}px; width: ${width}px;`;
+        )}px; width: ${barWidth}px;`;
         barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
         styling = barSize + " " + barDesign + " " + barPosition;
 
@@ -242,8 +289,9 @@ const drawMultiBars = function (data, options, barCount) {
         $(stackedBar).append(newElement);
         newElement = "";
       }
-      $(".x-axis").append(barLabel);
+      labels.push(barLabel);
       elements.push(stackedBar);
+      barLabel = "";
       stackedBar = "";
     } else {
       // Font color for bar
@@ -283,7 +331,7 @@ const drawMultiBars = function (data, options, barCount) {
 
       barSize = `max-height:100%; height: ${Math.floor(
         barHeight - 3
-      )}px; width: ${width}px;`;
+      )}px; width: ${barWidth}px;`;
       barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
       styling = barSize + " " + barDesign + " " + barPosition;
 
@@ -292,19 +340,24 @@ const drawMultiBars = function (data, options, barCount) {
       );
 
       $(".x-axis").append(barLabel);
+      labels.push(barLabel);
       elements.push(newElement);
+      barLabel = "";
+      newElement = "";
     }
     newElement = "";
     barCount--;
     currentBar++;
   }
-  return elements;
+  return { elements: elements, labels: labels };
 };
 
 //Regular single bar chart
 
 const drawBars = function (data, options, barCount) {
   let elements = [];
+  let labels = [];
+  let { height } = getDimensions(options.graphOptions);
   let newElement;
   let currentBar = 0;
   let width = data.length * 10;
@@ -358,16 +411,17 @@ const drawBars = function (data, options, barCount) {
     }
 
     barLabel = $(
-      `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
-        data[currentBar]
+      `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+        Object.keys(data[currentBar]) + ""
       )}</h1>`
     );
-    maxValue < $(".graph").height()
+    maxValue < height - 120
       ? (barHeight = parseInt(barValue[currentBar]))
       : (barHeight =
           barValue[currentBar] -
-          (barValue[currentBar] * (maxValue - $(".graph").height())) /
-            maxValue);
+          (barValue[currentBar] * (maxValue - (height - 120))) / maxValue);
+
+    console.log(maxValue, height);
 
     barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
@@ -379,14 +433,15 @@ const drawBars = function (data, options, barCount) {
 
     newElement = $(`<div style='${styling}'></div>`).text(barValue[currentBar]);
 
-    $(".x-axis").append(barLabel);
+    labels.push(barLabel);
     elements.push(newElement);
 
     newElement = "";
+    barLabel = "";
     barCount--;
     currentBar++;
   }
-  return elements;
+  return { elements: elements, labels: labels };
 };
 
 //Helper function to generate the x and y axis
@@ -522,27 +577,27 @@ const setBarSpacing = function (options) {
   $(".container > .x-axis").css("justify-content", spacing);
 };
 
-const setDimensions = function (options) {
+const getDimensions = function (options) {
   let { size } = options;
   let height;
   let width;
   if (typeof size !== "object") {
     switch (size) {
       case "small":
-        height = "400px";
-        width = "500px";
+        height = 400;
+        width = 500;
         break;
       case "medium":
-        height = "500px";
-        width = "550px";
+        height = 500;
+        width = 550;
         break;
       case "large":
-        height = "550px";
-        width = "600px";
+        height = 550;
+        width = 600;
         break;
       default:
-        height = "500px";
-        width = "550px";
+        height = 500;
+        width = 550;
         break;
     }
   } else {
@@ -550,8 +605,7 @@ const setDimensions = function (options) {
     width = size.width;
   }
 
-  $(".container").css("width", width);
-  $(".container").css("height", height);
+  return { height: height, width: width };
 };
 
 const showLegend = function (data, options) {
@@ -563,6 +617,8 @@ const showLegend = function (data, options) {
   let legendLabel = [];
   let legendColors = [];
   let tempLabel;
+  let squares = [];
+  let labels = [];
 
   if (type === "multi") {
     for (let i = 0; i < data.length; i++) {
@@ -586,8 +642,9 @@ const showLegend = function (data, options) {
             barSquare = $(
               `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
             );
-            $(".square").append(barSquare);
-            $(".label").append(barLabel);
+
+            squares.push(barSquare);
+            labels.push(barLabel);
           } else {
             tempLabel = legendLabel[legendLabel.indexOf(tempLabel)];
             tempColor = legendColors[legendLabel.indexOf(tempColor)];
@@ -618,10 +675,11 @@ const showLegend = function (data, options) {
       barSquare = $(
         `<div style='margin-bottom: 7px;height: 1.3rem; width: 1.3rem; border-radius: 25%; background-color: ${tempColor}'></div>`
       );
-      $(".square").append(barSquare);
-      $(".label").append(barLabel);
+      squares.push(barSquare);
+      labels.push(barLabel);
     }
   }
+  return { squares: squares, labels: labels };
 };
 
 //Format Labels for X axis and Legend
