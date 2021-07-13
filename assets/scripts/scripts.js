@@ -3,8 +3,8 @@ $(document).ready(function () {
     [
       { pepsi: [{ May: 324 }, { June: 24 }] },
       { coke: [{ September: 42 }, { March: 183 }] },
-      { gingerale: [{ April: 43 }] },
-      { dietcoke: [{ July: 344 }] },
+      { ginger_ale: [{ April: 43 }] },
+      { diet_coke: [{ July: 344 }] },
       { orange: [{ December: 95 }] },
     ], // data , can be objects label-value, or multi-value-label
     // [
@@ -214,9 +214,10 @@ const drawMultiBars = function (data, options, barCount) {
         } else {
           labelColor = fontColor;
         }
+        console.log(Object.keys(data[currentBar]) + "");
         barLabel = $(
-          `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
-            data[currentBar]
+          `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+            Object.keys(data[currentBar]) + ""
           )}</h1>`
         );
 
@@ -267,8 +268,8 @@ const drawMultiBars = function (data, options, barCount) {
       }
 
       barLabel = $(
-        `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${Object.keys(
-          data[currentBar]
+        `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+          Object.keys(data[currentBar]) + ""
         )}</h1>`
       );
       maxValue < $(".graph").height()
@@ -619,4 +620,25 @@ const showLegend = function (data, options) {
       $(".label").append(barLabel);
     }
   }
+};
+
+const applyCamel = function (string) {
+  let newString = "";
+  let camel = false;
+  for (let i = 0; i < string.length; i++) {
+    if (string[i] == "_") {
+      camel = true;
+      newString += " ";
+    } else if (camel == true) {
+      newString += string[i].toUpperCase();
+      camel = false;
+    } else {
+      newString += string[i];
+    }
+  }
+  return newString;
+};
+
+const applyPascalTitle = function (string) {
+  return string[0].toUpperCase() + applyCamel(string.slice(1, string.length));
 };
