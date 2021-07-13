@@ -5,9 +5,9 @@ This Chart API was built to display a variety of Bar Charts that will display th
 ## Examples of the API
 
 
-<img src="/images/chart1.png" alt="Single Bar Chart">
-<img src="/images/chart2.png" alt="Stacked Bar Chart">
-<img src="/images/chart3.png" alt="Single Small Bar Chart">
+<img width="400px" src="/images/chart1.png" alt="Single Bar Chart">
+<img width="400px" src="/images/chart2.png" alt="Small Single Bar Chart">
+<img width="500px" src="/images/chart3.png" alt="Stacked Bar Chart">
 
 
 ## How to use
