@@ -16,9 +16,9 @@ $(document).ready(function () {
         fontColor: "rgb(23,23,12)", // any color
         axisPoint: "broad", //broad , precise , average , default: broad
         yLabel: "Sales",
-        yLabelFontSize: "1.2rem",
+        yLabelFontSize: "1.5rem",
         xLabel: "Product",
-        xLabelFontSize: "1.2rem",
+        xLabelFontSize: "1.5rem",
         yMeasurement: "(in millions)",
         gridLines: true, // true or false for showing gridlines
       },
@@ -144,8 +144,8 @@ const getElements = function (data, options) {
   $(titleValue).css("color", fontColor);
   $(title).append(titleValue);
 
-  $(xLabel).css("font-size", xLabelFontSize);
-  $(yLabel).css("font-size", yLabelFontSize);
+  $(xLabelElement).css("font-size", xLabelFontSize);
+  $(yLabelElement).css("font-size", yLabelFontSize);
 
   $(xAxisLabel).append(xLabelElement);
   $(yAxisLabel).append(yLabelElement);
