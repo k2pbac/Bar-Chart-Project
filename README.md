@@ -4,14 +4,10 @@ This Chart API was built to display a variety of Bar Charts that will display th
 
 ## Examples of the API
 
-![BarChart1](/images/chart1.png)
-Format: ![Alt Text]("Single Bar Chart")
 
-![BarChart2](/images/chart2.png)
-Format: ![Alt Text]("Stacked Bar Chart")
-
-![BarChart3](/images/chart3.png)
-Format: ![Alt Text]("Small Single Bar Chart")
+<img src="/images/chart1.png" alt="Single Bar Chart">
+<img src="/images/chart2.png" alt="Stacked Bar Chart">
+<img src="/images/chart3.png" alt="Single Small Bar Chart">
 
 
 ## How to use
