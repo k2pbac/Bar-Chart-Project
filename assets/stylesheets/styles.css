@@ -1,10 +1,10 @@
 .container {
-  margin: auto;
+  margin-top: 20px;
   display: grid;
   width: 500px;
   height: 550px;
   grid-template-areas:
-    "top-corner top-corner title title title title title"
+    "top-corner top-corner title title title title top-right"
     "yLabel yAxis  graph graph graph square label"
     "corner corner xAxis xAxis xAxis bottom-right bottom-right"
     "corner corner xLabel xLabel xLabel bottom-right bottom-right";

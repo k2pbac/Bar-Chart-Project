@@ -1,5 +1,48 @@
 $(document).ready(function () {
   drawBarChart(
+    [{ iPhone_11: 189 }, { galaxy_note_20: 149 }, { sonim_XP5S: 82 }],
+    {
+      graphOptions: {
+        type: "single", //Multi or Single - Stacked or regular
+        size: "small", // small, medium, large, custom (any sizing), default: medium
+        title: "Phone Sales 2020", //any String
+        fontSize: "1.5rem", //any sizing
+        fontColor: "rgb(23,23,12)", // any color
+        axisPoint: "average", //broad , precise , average , default: broad
+        yLabel: "Sales",
+        yLabelFontSize: "1.2rem",
+        xLabel: "Products",
+        xLabelFontSize: "1.2rem",
+        yMeasurement: " (in millions)",
+        gridLines: true, // true or false for showing gridlines
+      },
+      barOptions: {
+        fontSize: "1.1rem", //any sizing
+        fontColor: [
+          ["rgba(135, 211, 124, 1)"],
+          ["rgba(102, 51, 153, 1)"],
+          ["rgba(0, 181, 204, 1)"],
+          ["rgba(219, 10, 91, 1)"],
+          ["rgba(255, 203, 5, 1)"],
+          ["rgba(189, 195, 199, 1)"],
+        ], // any color or array of colors
+        spacing: "even", // around, between, even
+        radius: "0%", // 0 - 100%
+        position: "bottom", // top, bottom, center , default: center,
+        // any type of color or array of colors
+        barColor: [
+          ["rgba(135, 211, 124, 1)"],
+          ["rgba(102, 51, 153, 1)"],
+          ["rgba(0, 181, 204, 1)"],
+          ["rgba(219, 10, 91, 1)"],
+          ["rgba(255, 203, 5, 1)"],
+          ["rgba(189, 195, 199, 1)"],
+        ],
+      },
+    },
+    $(".element-test3")
+  );
+  drawBarChart(
     [
       { iPhone_11: 189 },
       { galaxy_note_20: 149 },
