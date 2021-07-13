@@ -12,7 +12,7 @@ $(document).ready(function () {
     {
       graphOptions: {
         type: "single", //Multi or Single - Stacked or regular
-        size: { width: "800px", height: "500px" }, // small, medium, large, custom (any sizing), default: medium
+        size: { width: "950px", height: "500px" }, // small, medium, large, custom (any sizing), default: medium
         title: "Phone Sales 2020", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
@@ -212,13 +212,14 @@ const drawMultiBars = function (data, options, barCount) {
   let labels = [];
   let newElement;
   let currentBar = 0;
-  let barWidth = data.length * 10;
   let maxValue = getMultiLargestData(data);
   //Bar Styling
   let { radius, position, barColor, fontColor, fontSize } = options.barOptions;
   let barDesign;
   let barSize;
   let barValue = getMultiDataValues(data);
+  let newCount = showLegend(data, options);
+  let barWidth = newCount.count * 8;
   let barLabel;
   let barHeight;
   let barPosition;
@@ -272,9 +273,9 @@ const drawMultiBars = function (data, options, barCount) {
           labelColor = fontColor;
         }
         barLabel = $(
-          `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+          `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
             Object.keys(data[currentBar]) + ""
-          )}</h1>`
+          )}</p>`
         );
 
         maxValue < height - 120
@@ -325,9 +326,9 @@ const drawMultiBars = function (data, options, barCount) {
       }
 
       barLabel = $(
-        `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+        `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
           Object.keys(data[currentBar]) + ""
-        )}</h1>`
+        )}</p>`
       );
       maxValue < $(".graph").height()
         ? (barHeight = parseInt(barValue[currentBar]))
@@ -369,7 +370,7 @@ const drawBars = function (data, options, barCount) {
   let { height } = getDimensions(options.graphOptions);
   let newElement;
   let currentBar = 0;
-  let width = data.length * 10;
+  let width = data.length * 8;
   let maxValue = getLargestData(data);
 
   //Bar Styling
@@ -421,9 +422,9 @@ const drawBars = function (data, options, barCount) {
     }
 
     barLabel = $(
-      `<h1 style='font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+      `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${width}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
         Object.keys(data[currentBar]) + ""
-      )}</h1>`
+      )}</p>`
     );
     maxValue < height - 120
       ? (barHeight = parseInt(barValue[currentBar]))
@@ -618,6 +619,7 @@ const showLegend = function (data, options) {
   let { barColor } = options.barOptions;
   let { type } = options.graphOptions;
   let barLabel;
+  let count = 0;
   let barSquare;
   let tempColor;
   let legendLabel = [];
@@ -629,6 +631,7 @@ const showLegend = function (data, options) {
   if (type === "multi") {
     for (let i = 0; i < data.length; i++) {
       if (Array.isArray(barColor[i])) {
+        count++;
         for (let x = 0; x < barColor[i].length; x++) {
           if (
             Object.keys(Object.values(data[i])[0][x]) &&
@@ -685,7 +688,7 @@ const showLegend = function (data, options) {
       labels.push(barLabel);
     }
   }
-  return { squares: squares, labels: labels };
+  return { squares: squares, labels: labels, count: count };
 };
 
 //Format Labels for X axis and Legend
