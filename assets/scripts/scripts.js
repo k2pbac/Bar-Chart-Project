@@ -1,46 +1,48 @@
 $(document).ready(function () {
   drawBarChart(
     [
-      { pepsi: 324 },
-      { coke: 203 },
-      { ginger_ale: 23 },
-      { diet_coke: 344 },
-      { orange: 95 },
+      { iPhone_11: 189 },
+      { galaxy_note_20: 149 },
+      { sonim_XP5S: 82 },
+      { huawei_p30_pro: 120 },
+      { blackberry_KEYone: 65 },
+      { xperia_pro: 73 },
+      { pixel_5: 130 },
     ],
     {
       graphOptions: {
         type: "single", //Multi or Single - Stacked or regular
-        size: "large", // small, medium, large, custom (any sizing), default: medium
+        size: { width: "800px", height: "500px" }, // small, medium, large, custom (any sizing), default: medium
         title: "Pop Sales 2021", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
-        axisPoint: "broad", //broad , precise , average , default: broad
+        axisPoint: "precise", //broad , precise , average , default: broad
         yLabel: "Sales",
-        yLabelFontSize: "1.5rem",
+        yLabelFontSize: "1.2rem",
         xLabel: "Product",
-        xLabelFontSize: "1.5rem",
+        xLabelFontSize: "1.2rem",
         yMeasurement: "(in millions)",
         gridLines: true, // true or false for showing gridlines
       },
       barOptions: {
         fontSize: "1.1rem", //any sizing
         fontColor: [
-          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-          ["rgba(1, 195, 199, 1)"],
-          ["rgba(242, 120, 75, 1)"],
-          ["rgb(4, 147, 114)"],
-          ["rgba(123, 13, 199, 1)"],
+          ["rgba(135, 211, 124, 1)"],
+          ["rgba(102, 51, 153, 1)"],
+          ["rgba(0, 181, 204, 1)"],
+          ["rgba(219, 10, 91, 1)"],
+          ["rgba(255, 203, 5, 1)"],
         ], // any color or array of colors
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center,
         // any type of color or array of colors
         barColor: [
-          "rgba(189, 195, 199, 1)",
-          "rgba(1, 195, 199, 1)",
-          "rgba(189, 2, 199, 1)",
-          "rgb(4, 147, 114)",
-          "rgba(123, 13, 199, 1)",
+          ["rgba(135, 211, 124, 1)"],
+          ["rgba(102, 51, 153, 1)"],
+          ["rgba(0, 181, 204, 1)"],
+          ["rgba(219, 10, 91, 1)"],
+          ["rgba(255, 203, 5, 1)"],
         ],
       },
     },
@@ -131,7 +133,7 @@ const getElements = function (data, options) {
   let yLabelElement = $(
     `<span style='white-space: nowrap; transform: rotate(-90deg);'>${yLabel}${yMeasurement}</span>`
   );
-  let xAxisLabel = $("<div class='xLabel'</div>");
+  let xAxisLabel = $("<div  class='xLabel'</div>");
   let xLabelElement = $(`<p>${xLabel}</p>`);
   let titleValue = $(
     `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
@@ -340,7 +342,7 @@ const drawMultiBars = function (data, options, barCount) {
       barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
       styling = barSize + " " + barDesign + " " + barPosition;
 
-      newElement = $(`<div style='${styling}'></div>`).text(
+      newElement = $(`<div class="bar" style='${styling}'></div>`).text(
         barValue[currentBar]
       );
 
@@ -427,8 +429,6 @@ const drawBars = function (data, options, barCount) {
           barValue[currentBar] -
           (barValue[currentBar] * (maxValue - (height - 120))) / maxValue);
 
-    console.log(maxValue, height);
-
     barPosition = `display: flex; justify-content: center; align-items: ${position};`;
 
     barSize = `max-height:100%; height: ${Math.floor(
@@ -437,7 +437,9 @@ const drawBars = function (data, options, barCount) {
     barDesign = `box-shadow: 0 0 8px 0px #000; clip-path: inset(0px -15px 0px -15px);border-radius: ${radius}; border-bottom: none; background-color: ${tempColor};`;
     styling = barSize + " " + barDesign + " " + barPosition;
 
-    newElement = $(`<div style='${styling}'></div>`).text(barValue[currentBar]);
+    newElement = $(`<div class="bar" style='${styling}'></div>`).text(
+      barValue[currentBar]
+    );
 
     labels.push(barLabel);
     elements.push(newElement);
@@ -496,15 +498,17 @@ const drawAxis = function (data, options) {
         : (axisUnits = maxValue / data.length);
       break;
   }
+  let totalHeight =
+    maxValue > height - 120 ? maxValue + axisUnits : height - 120;
 
-  for (let i = 0; i <= maxValue; i += axisUnits) {
+  for (let i = 0; i <= totalHeight; i += axisUnits) {
     maxValue > height - 120
       ? (axisHeight = i - (i * (maxValue - (height - 120))) / maxValue)
       : (axisHeight = i);
     axisPoints.push(
       $(
         `<div style='position: absolute; bottom: 0; left:0; max-height:100%; height: ${
-          i !== 0 ? Math.floor(axisHeight) : ""
+          i !== 0 ? Math.floor(axisHeight) : "0"
         }px;'></div>`
       ).text(Math.floor(i))
     );
@@ -606,8 +610,8 @@ const getDimensions = function (options) {
         break;
     }
   } else {
-    height = size.height;
-    width = size.width;
+    height = parseInt(size.height.slice(0, -2));
+    width = parseInt(size.width.slice(0, -2));
   }
 
   return { height: height, width: width };
