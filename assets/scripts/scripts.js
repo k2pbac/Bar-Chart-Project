@@ -96,11 +96,12 @@ $(document).ready(function () {
 
 const drawBarChart = function (data, options, element) {
   let container = drawGraph(data, options);
+  let { height, width } = getDimensions(options.graphOptions);
 
+  $(container).css("width", width);
+  $(container).css("height", height);
   $(element).append(container);
   setBarSpacing(options.barOptions);
-
-  let { height, width } = getDimensions(options.graphOptions);
 };
 
 const getElements = function (data, options) {
@@ -364,7 +365,7 @@ const drawBars = function (data, options, barCount) {
   let maxValue = getLargestData(data);
 
   //Bar Styling
-  let { radius, position, barColor, fontColor, fontSize } = options;
+  let { radius, position, barColor, fontColor, fontSize } = options.barOptions;
   let barDesign;
   let barSize;
   let barValue = getDataValues(data);
@@ -399,6 +400,7 @@ const drawBars = function (data, options, barCount) {
     } else {
       tempColor = barColor;
     }
+
     // Font color for label
     if (Array.isArray(fontColor)) {
       if (typeof fontColor[currentBar] !== "undefined") {
