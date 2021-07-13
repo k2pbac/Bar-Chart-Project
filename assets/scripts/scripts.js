@@ -13,15 +13,15 @@ $(document).ready(function () {
       graphOptions: {
         type: "single", //Multi or Single - Stacked or regular
         size: { width: "800px", height: "500px" }, // small, medium, large, custom (any sizing), default: medium
-        title: "Pop Sales 2021", //any String
+        title: "Phone Sales 2020", //any String
         fontSize: "1.5rem", //any sizing
         fontColor: "rgb(23,23,12)", // any color
-        axisPoint: "precise", //broad , precise , average , default: broad
+        axisPoint: "average", //broad , precise , average , default: broad
         yLabel: "Sales",
         yLabelFontSize: "1.2rem",
-        xLabel: "Product",
+        xLabel: "Products",
         xLabelFontSize: "1.2rem",
-        yMeasurement: "(in millions)",
+        yMeasurement: " (in millions)",
         gridLines: true, // true or false for showing gridlines
       },
       barOptions: {
@@ -32,6 +32,7 @@ $(document).ready(function () {
           ["rgba(0, 181, 204, 1)"],
           ["rgba(219, 10, 91, 1)"],
           ["rgba(255, 203, 5, 1)"],
+          ["rgba(189, 195, 199, 1)"],
         ], // any color or array of colors
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
@@ -43,6 +44,7 @@ $(document).ready(function () {
           ["rgba(0, 181, 204, 1)"],
           ["rgba(219, 10, 91, 1)"],
           ["rgba(255, 203, 5, 1)"],
+          ["rgba(189, 195, 199, 1)"],
         ],
       },
     },
@@ -66,9 +68,9 @@ $(document).ready(function () {
         axisPoint: "broad", //broad , precise , average , default: broad
         yLabel: "Sales",
         yLabelFontSize: "1.2rem",
-        xLabel: "Product",
+        xLabel: "Products",
         xLabelFontSize: "1.2rem",
-        yMeasurement: "(in millions)",
+        yMeasurement: " (in millions)",
         gridLines: true, // true or false for showing gridlines
       },
       barOptions: {
@@ -484,11 +486,7 @@ const drawAxis = function (data, options) {
     case "average":
       const sum = dataValues.reduce((a, b) => a + b, 0);
       const avg = sum / data.length || 0;
-      height - 120 < maxValue
-        ? (axisUnits = Math.floor(
-            avg / data.length + Math.floor(avg - (height - 120)) / data.length
-          ))
-        : (axisUnits = avg / data.length);
+      axisUnits = avg;
       break;
     case "broad":
       height - 120 < maxValue
@@ -498,10 +496,9 @@ const drawAxis = function (data, options) {
         : (axisUnits = maxValue / data.length);
       break;
   }
-  let totalHeight =
-    maxValue > height - 120 ? maxValue + axisUnits : height - 120;
-
-  for (let i = 0; i <= totalHeight; i += axisUnits) {
+  let tempHeight =
+    height - 120 > maxValue + axisUnits ? height - 120 : maxValue + axisUnits;
+  for (let i = 0; i <= tempHeight; i += axisUnits) {
     maxValue > height - 120
       ? (axisHeight = i - (i * (maxValue - (height - 120))) / maxValue)
       : (axisHeight = i);
