@@ -3,8 +3,8 @@ $(document).ready(function () {
     [
       { pepsi: 324 },
       { coke: 203 },
-      { gingerale: 23 },
-      { dietcoke: 344 },
+      { ginger_ale: 23 },
+      { diet_coke: 344 },
       { orange: 95 },
     ],
     {
@@ -39,7 +39,7 @@ $(document).ready(function () {
           "rgba(189, 195, 199, 1)",
           "rgba(1, 195, 199, 1)",
           "rgba(189, 2, 199, 1)",
-          "rgba(189, 195, 123, 1)",
+          "rgb(4, 147, 114)",
           "rgba(123, 13, 199, 1)",
         ],
       },
@@ -101,7 +101,6 @@ const drawBarChart = function (data, options, element) {
   $(container).css("width", width);
   $(container).css("height", height);
   $(element).append(container);
-  setBarSpacing(options.barOptions);
 };
 
 const getElements = function (data, options) {
@@ -113,6 +112,7 @@ const getElements = function (data, options) {
     yMeasurement,
     gridLines,
   } = options.graphOptions;
+  let spacing = setBarSpacing(options.barOptions);
   let { fontColor, fontSize } = options.graphOptions;
   let elements = {};
   let yAxis = $("<div class='y-axis'></div>");
@@ -136,6 +136,10 @@ const getElements = function (data, options) {
   let titleValue = $(
     `<input style='border: none;' type='text' value='${options.graphOptions.title}'>`
   );
+
+  $(graph).css("justify-content", spacing);
+  $(xAxis).css("justify-content", spacing);
+
   $(titleValue).css("font-size", fontSize);
   $(titleValue).css("color", fontColor);
   $(title).append(titleValue);
@@ -404,7 +408,7 @@ const drawBars = function (data, options, barCount) {
     // Font color for label
     if (Array.isArray(fontColor)) {
       if (typeof fontColor[currentBar] !== "undefined") {
-        labelColor = fontColor[currentBar];
+        labelColor = fontColor[currentBar][0];
       } else {
         labelColor = fontColor[0];
       }
@@ -450,6 +454,7 @@ const drawBars = function (data, options, barCount) {
 
 const drawAxis = function (data, options) {
   let { axisPoint, type } = options;
+  let { height } = getDimensions(options);
   let maxValue;
   let dataValues;
   switch (type) {
@@ -468,34 +473,33 @@ const drawAxis = function (data, options) {
 
   switch (axisPoint) {
     case "precise":
-      $(".y-axis").height() < maxValue
+      height - 120 < maxValue
         ? (axisUnits = Math.floor(
-            maxValue * 0.15 + (maxValue - $(".y-axis").height()) / data.length
+            maxValue * 0.15 + (maxValue - (height - 120)) / data.length
           ))
         : (axisUnits = Math.floor(maxValue * 0.15));
       break;
     case "average":
       const sum = dataValues.reduce((a, b) => a + b, 0);
       const avg = sum / data.length || 0;
-      $(".y-axis").height() < maxValue
+      height - 120 < maxValue
         ? (axisUnits = Math.floor(
-            avg / data.length +
-              Math.floor(avg - $(".y-axis").height()) / data.length
+            avg / data.length + Math.floor(avg - (height - 120)) / data.length
           ))
         : (axisUnits = avg / data.length);
       break;
     case "broad":
-      $(".y-axis").height() < maxValue
+      height - 120 < maxValue
         ? (axisUnits =
             Math.floor(maxValue / data.length) +
-            Math.floor(maxValue - $(".y-axis").height()) / data.length)
+            Math.floor(maxValue - (height - 120)) / data.length)
         : (axisUnits = maxValue / data.length);
       break;
   }
 
   for (let i = 0; i <= maxValue; i += axisUnits) {
-    maxValue > $(".y-axis").height()
-      ? (axisHeight = i - (i * (maxValue - $(".graph").height())) / maxValue)
+    maxValue > height - 120
+      ? (axisHeight = i - (i * (maxValue - (height - 120))) / maxValue)
       : (axisHeight = i);
     axisPoints.push(
       $(
@@ -575,8 +579,7 @@ const setBarSpacing = function (options) {
       break;
   }
 
-  $(".container > .graph").css("justify-content", spacing);
-  $(".container > .x-axis").css("justify-content", spacing);
+  return spacing;
 };
 
 const getDimensions = function (options) {
@@ -670,8 +673,8 @@ const showLegend = function (data, options) {
         tempColor = barColor;
       }
       barLabel = $(
-        `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${Object.keys(
-          data[i]
+        `<div style='margin-bottom: 5px; font-size: 1.2rem; padding-left: 4px;'>${applyPascalTitle(
+          Object.keys(data[i]) + ""
         )}</div>`
       );
       barSquare = $(
