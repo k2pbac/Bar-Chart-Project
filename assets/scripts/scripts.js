@@ -316,7 +316,7 @@ const drawMultiBars = function (data, options, barCount) {
           labelColor = fontColor;
         }
         barLabel = $(
-          `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+          `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; min-width: ${barWidth}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
             Object.keys(data[currentBar]) + ""
           )}</p>`
         );
@@ -369,7 +369,7 @@ const drawMultiBars = function (data, options, barCount) {
       }
 
       barLabel = $(
-        `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+        `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${barWidth}px; min-width: ${barWidth}px;  font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
           Object.keys(data[currentBar]) + ""
         )}</p>`
       );
@@ -465,7 +465,7 @@ const drawBars = function (data, options, barCount) {
     }
 
     barLabel = $(
-      `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${width}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
+      `<p style='padding-top: 10px; padding-right: 10px; transform: rotate(-45deg); max-width: ${width}px; min-width: ${width}px; font-size: ${fontSize}; color: ${labelColor};'>${applyPascalTitle(
         Object.keys(data[currentBar]) + ""
       )}</p>`
     );
