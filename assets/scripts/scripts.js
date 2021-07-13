@@ -1,22 +1,22 @@
 $(document).ready(function () {
   drawBarChart(
-    // [
-    //   { pepsi: [{ May: 324 }, { June: 24 }] },
-    //   { coke: [{ September: 42 }, { March: 183 }] },
-    //   { gingerale: [{ April: 43 }] },
-    //   { dietcoke: [{ May: 344 }] },
-    //   { orange: [{ December: 95 }] },
-    // ], // data , can be objects label-value, or multi-value-label
     [
-      { pepsi: 324 },
-      { coke: 203 },
-      { gingerale: 23 },
-      { dietcoke: 344 },
-      { orange: 95 },
-    ],
+      { pepsi: [{ May: 324 }, { June: 24 }] },
+      { coke: [{ September: 42 }, { March: 183 }] },
+      { gingerale: [{ April: 43 }] },
+      { dietcoke: [{ July: 344 }] },
+      { orange: [{ December: 95 }] },
+    ], // data , can be objects label-value, or multi-value-label
+    // [
+    //   { pepsi: 324 },
+    //   { coke: 203 },
+    //   { gingerale: 23 },
+    //   { dietcoke: 344 },
+    //   { orange: 95 },
+    // ],
     {
       graphOptions: {
-        type: "single", //Multi or Single - Stacked or regular
+        type: "multi", //Multi or Single - Stacked or regular
         size: "medium", // small, medium, large, custom (any sizing), default: medium
         title: "Pop Sales 2021", //any String
         fontSize: "1.5rem", //any sizing
@@ -33,7 +33,7 @@ $(document).ready(function () {
         fontSize: "1.1rem", //any sizing
         fontColor: [
           ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-          ["rgba(1, 195, 199, 1)]"],
+          ["rgba(1, 195, 199, 1)"],
           ["rgba(242, 120, 75, 1)"],
           ["rgb(4, 147, 114)"],
           ["rgba(123, 13, 199, 1)"],
@@ -41,20 +41,20 @@ $(document).ready(function () {
         spacing: "even", // around, between, even
         radius: "0%", // 0 - 100%
         position: "bottom", // top, bottom, center , default: center,
-        // barColor: [
-        //   ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
-        //   ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
-        //   ["rgba(242, 120, 75, 1)"],
-        //   ["rgb(4, 147, 114)"],
-        //   ["rgba(123, 13, 199, 1)"],
-        // ], // any type of color or array of colors
         barColor: [
-          "rgba(189, 195, 199, 1)",
-          "rgba(1, 195, 199, 1)",
-          "rgba(189, 2, 199, 1)",
-          "rgba(189, 195, 123, 1)",
-          "rgba(123, 13, 199, 1)",
-        ],
+          ["rgba(189, 195, 199, 1)", "rgba(189, 2, 199, 1)"],
+          ["rgba(1, 195, 199, 1)", "rgba(189, 195, 123, 1)"],
+          ["rgba(242, 120, 75, 1)"],
+          ["rgb(4, 147, 114)"],
+          ["rgba(123, 13, 199, 1)"],
+        ], // any type of color or array of colors
+        // barColor: [
+        //   "rgba(189, 195, 199, 1)",
+        //   "rgba(1, 195, 199, 1)",
+        //   "rgba(189, 2, 199, 1)",
+        //   "rgba(189, 195, 123, 1)",
+        //   "rgba(123, 13, 199, 1)",
+        // ],
       },
     },
     $(".element-test") // element to load chart into
@@ -185,7 +185,6 @@ const drawMultiBars = function (data, options, barCount) {
   while (barCount > 0) {
     if (Array.isArray(Object.values(data[currentBar])[0])) {
       let stackedBar = $("<div></div>");
-      let count = 0;
 
       for (let i = 0; i < Object.values(data[currentBar])[0].length; i++) {
         // Font color for bar
@@ -201,7 +200,10 @@ const drawMultiBars = function (data, options, barCount) {
         // Font color for label
         if (Array.isArray(fontColor)) {
           if (typeof fontColor[currentBar] !== "undefined") {
-            if (Array.isArray(fontColor[currentBar])) {
+            if (
+              Array.isArray(fontColor[currentBar]) &&
+              fontColor[currentBar].length > 1
+            ) {
               labelColor = fontColor[currentBar][i];
             } else {
               labelColor = fontColor[currentBar];
@@ -238,7 +240,6 @@ const drawMultiBars = function (data, options, barCount) {
         );
         $(stackedBar).append(newElement);
         newElement = "";
-        count++;
       }
       $(".x-axis").append(barLabel);
       elements.push(stackedBar);
