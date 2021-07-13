@@ -1,7 +1,7 @@
 $(document).ready(function () {
   drawBarChart(
     [
-      { pepsi: [{ May: 324 }, { June: 24 }] },
+      { pepsi: [{ may: 324 }, { June: 24 }] },
       { coke: [{ September: 42 }, { March: 183 }] },
       { ginger_ale: [{ April: 43 }] },
       { diet_coke: [{ July: 344 }] },
@@ -574,7 +574,9 @@ const showLegend = function (data, options) {
               Object.keys(Object.values(data[i])[0][x]) + ""
             )
           ) {
-            tempLabel = Object.keys(Object.values(data[i])[0][x]) + "";
+            tempLabel = applyPascalTitle(
+              Object.keys(Object.values(data[i])[0][x]) + ""
+            );
             tempColor = barColor[i][x];
             legendLabel.push(tempLabel);
             legendColors.push(tempColor);
@@ -622,6 +624,7 @@ const showLegend = function (data, options) {
   }
 };
 
+//Format Labels for X axis and Legend
 const applyCamel = function (string) {
   let newString = "";
   let camel = false;
