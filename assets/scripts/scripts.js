@@ -541,7 +541,7 @@ const drawAxis = function (data, options) {
       break;
   }
   let tempHeight =
-    height - 120 > maxValue + axisUnits ? height - 120 : maxValue + axisUnits;
+    height - 120 > maxValue ? height - 120 : maxValue + axisUnits;
   for (let i = 0; i <= tempHeight; i += axisUnits) {
     maxValue > height - 120
       ? (axisHeight = i - (i * (maxValue - (height - 120))) / maxValue)
