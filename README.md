@@ -96,4 +96,57 @@ barColor | An Array of String | Each string will contain a color for the backgro
 
 
 
+## List of Bugs and Issues
+
+<ul>
+  <li>Smaller sizes than 500px by 500px of the chart will not resize properly</li>
+  <li>Large data sets will make the bars squish together</li>
+  <li>Stacked bar chart legend colors are not accurate with similar labeled data</li>
+  <li>If the arguments passed into the function don't match the chart will break</li>
+  <li>Adding Bootstrap will change the styling due to shared class names (i.e. container, etc.)</li>
+  <li>Any classes that share styling will break the chart</li>
+</ul>
+
+
+
+## Features to come...
+
+<ol>
+  <li>The ability to handle larger datasets</li>
+  <li>Tooltip/information popup when hovering over a value on the bar</li>
+  <li>3D designed bars</li>
+  <li>Landscape version of the charts</li>
+  <li>Handling more complex datasets</li>
+</ol
+
+  
+
+ ### External Resources Used 
+  
+ <ol>
+   <li>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">MDN Javascript</a>
+    </li>
+   <li>
+    <a href="https://www.mathsisfun.com/numbers/percentage-change.html">Change in percent<a>
+    </li>
+    <li>
+    <a href="http://www.flatuicolorpicker.com/yellow-hsl-color-model/">RGBA Colors<a> 
+    </li>
+    <li>
+        <a href="https://stackoverflow.com">Stack Overflow</a>
+    </li>
+    <li>
+      <a href="https://api.jquery.com">jQuery API</a>
+     </li>
+     <li>
+       <a href="https://bansal.io/pattern-css#grid">Pattern CSS Library</a>
+     </li>
+     <li>
+       <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#nesting_grids">MDN CSS Grid</a>
+      </li>
+      <li>
+        <a href="https://css-tricks.com/snippets/css/complete-guide-grid/">CSS-tricks Grid Guide</a>
+      </li>
+ </ol>
 
